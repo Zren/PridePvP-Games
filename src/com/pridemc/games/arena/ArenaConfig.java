@@ -22,6 +22,15 @@ public class ArenaConfig {
 		return Core.arenas.getKeys(false);
 	}
 
+	public static void loadArenaConfig() {
+		loadArenas();
+		if (!Core.config.isSet(NODE_COUNTDOWN))
+			Core.config.set(NODE_COUNTDOWN, DEFAULT_COUNTDOWN);
+		if (!Core.config.isSet(NODE_GRACE_PERIOD))
+			Core.config.set(NODE_GRACE_PERIOD, DEFAULT_GRACE_PERIOD);
+		saveArenaConfig();
+	}
+
 	public static void loadArenas() {
 		for (String arenaName : ArenaConfig.getArenaNames()) {
 			ArenaManager.addArena(new Arena(arenaName));
@@ -37,14 +46,10 @@ public class ArenaConfig {
 	}
 
 	public static long getCountdownDelay() {
-		if (!Core.arenas.isSet(NODE_COUNTDOWN))
-			Core.arenas.set(NODE_COUNTDOWN, DEFAULT_COUNTDOWN);
-		return TimeUnit.MILLISECONDS.convert(Core.arenas.getLong(NODE_COUNTDOWN, DEFAULT_GRACE_PERIOD), TimeUnit.SECONDS);
+		return TimeUnit.MILLISECONDS.convert(Core.config.getLong(NODE_COUNTDOWN, DEFAULT_GRACE_PERIOD), TimeUnit.SECONDS);
 	}
 
 	public static long getGracePeriodDelay() {
-		if (!Core.arenas.isSet(NODE_GRACE_PERIOD))
-			Core.arenas.set(NODE_GRACE_PERIOD, DEFAULT_GRACE_PERIOD);
-		return TimeUnit.MILLISECONDS.convert(Core.arenas.getLong(NODE_GRACE_PERIOD, DEFAULT_GRACE_PERIOD), TimeUnit.SECONDS);
+		return TimeUnit.MILLISECONDS.convert(Core.config.getLong(NODE_GRACE_PERIOD, DEFAULT_GRACE_PERIOD), TimeUnit.SECONDS);
 	}
 }

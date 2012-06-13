@@ -46,7 +46,7 @@ public class Core extends JavaPlugin {
 		instance = this;
 		
 		arenas = YamlConfiguration.loadConfiguration(new File(getDataFolder(), "arenas.yml"));
-		ArenaConfig.loadArenas();
+		ArenaConfig.loadArenaConfig();
 		
 		//getConfig().options().copyDefaults(true);
 		
