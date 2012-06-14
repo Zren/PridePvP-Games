@@ -209,4 +209,27 @@ public class Arena {
 	public TaskInjector getTaskInjector() {
 		return taskInjector;
 	}
+
+	public void startTaskFor(State state) {
+		scheduleTaskFor(state, 0);
+	}
+
+	public void scheduleTaskFor(State state, long delay) {
+		switch (state) {
+			case COUNTING_DOWN:
+				getTaskInjector().schedule(new ArenaCountdownTask(this), delay);
+				break;
+
+			case INITIAL_GRACE_PERIOD:
+				getTaskInjector().schedule(new ArenaGraceTask(this), delay);
+				break;
+
+			case RUNNING_GAME:
+				getTaskInjector().schedule(new ArenaStartGameTask(this), delay);
+				break;
+
+			default:
+				break;
+		}
+	}
 }

@@ -25,7 +25,6 @@ public class ArenaCountdownTask implements Runnable {
 		MessageUtil.sendMsgToServer("[Arena - %s] Game starts in %d minute(s).", arena.getName(), minutes);
 
 		//
-		arena.getTaskInjector().schedule(new ArenaGraceTask(arena), delayMillis);
-
+		arena.scheduleTaskFor(Arena.State.INITIAL_GRACE_PERIOD, delayMillis);
 	}
 }

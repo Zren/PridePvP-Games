@@ -36,6 +36,6 @@ public class ArenaGraceTask implements Runnable {
 		MessageUtil.sendMsgToServer("[Arena - %s] Grace Period Started - Game Begins in %s minute(s).", arena.getName(), minutes);
 
 		//
-		arena.getTaskInjector().schedule(new ArenaStartGameTask(arena), delayMillis);
+		arena.scheduleTaskFor(Arena.State.RUNNING_GAME, delayMillis);
 	}
 }

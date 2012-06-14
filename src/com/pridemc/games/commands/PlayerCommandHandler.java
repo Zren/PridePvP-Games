@@ -33,18 +33,25 @@ public class PlayerCommandHandler implements CommandExecutor {
 		if (args.length > 0) {
 			if (args[0].equalsIgnoreCase("help")) {
 				return (help.onCommand(sender, cmd, label, args));
+
 			} else if (args[0].equalsIgnoreCase("spawn")) {
 				return (spawn.onCommand(sender, cmd, label, args));
+
 			} else if (args[0].equalsIgnoreCase("setspawn")) {
 				return (setspawn.onCommand(sender, cmd, label, args));
+
 			} else if (args[0].equalsIgnoreCase("shop")) {
 				return (shop.onCommand(sender, cmd, label, args));
+
 			} else if (args[0].equalsIgnoreCase("setshop")) {
 				return (setshop.onCommand(sender, cmd, label, args));
+
 			} else if (args[0].equalsIgnoreCase("list")) {
 				return (list.onCommand(sender, cmd, label, args));
+
 			} else if (args[0].equalsIgnoreCase("leave")) {
 				return (leave.onCommand(sender, cmd, label, args));
+
 			}
 		} else {
 			String msg = "Type " + ChatColor.GOLD + "/pg help" + ChatColor.YELLOW + " to view player commands";

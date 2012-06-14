@@ -1,7 +1,5 @@
 package com.pridemc.games.arena;
 
-import org.bukkit.Bukkit;
-
 /**
  * Author: Chris H (Zren / Shade)
  * Date: 6/2/12
@@ -24,6 +22,6 @@ public class ArenaStartGameTask implements Runnable {
 		arena.setState(Arena.State.RUNNING_GAME);
 
 		// Msg
-		Bukkit.broadcastMessage(String.format("[Arena - %s] Game Started", arena.getName()));
+		MessageUtil.sendMsgToServer("[Arena - %s] Game Started", arena.getName());
 	}
 }

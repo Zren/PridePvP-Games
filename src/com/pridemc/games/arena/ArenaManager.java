@@ -57,7 +57,7 @@ public class ArenaManager {
 
 		if (arena.getState() == Arena.State.WAITING_FOR_PLAYERS && arena.getArenaPlayers().size() >= arena.getPlayersRequiredToStart()) {
 			// Arena is ready
-			arena.getTaskInjector().schedule(new ArenaCountdownTask(arena), 0);
+			arena.startTaskFor(Arena.State.COUNTING_DOWN);
 		}
 	}
 
