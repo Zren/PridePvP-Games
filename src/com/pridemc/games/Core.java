@@ -20,46 +20,43 @@ import java.util.Map;
 
 
 public class Core extends JavaPlugin {
-	
-	//HashMaps----------------------------------------------------------
-	
-	private Map<Player, String> editing = new HashMap<Player, String>();
-	
-	public Map<Player, String> getEditing() {
-        
-        return editing;
 
-  	}
-	
+	//HashMaps----------------------------------------------------------
+
+	private Map<Player, String> editing = new HashMap<Player, String>();
+
+	public Map<Player, String> getEditing() {
+		return editing;
+	}
+
 	//---------------------------------------------------------------------
+
 	public static YamlConfiguration arenas;
-	
 	public static YamlConfiguration config;
-	
+
 	public static Core instance;
-	
-	public void onEnable(){
+
+	public void onEnable() {
+		instance = this;
 		TaskInjector.newInstance(this);
 
+		// Config
 		config = (YamlConfiguration) getConfig();
-		
-		instance = this;
-		
 		arenas = YamlConfiguration.loadConfiguration(new File(getDataFolder(), "arenas.yml"));
 		ArenaConfig.loadArenaConfig();
-		
-		//getConfig().options().copyDefaults(true);
-		
-		saveConfig();
-		
-		getLogger().info("has been enabled");
-		
-		getCommand("arena").setExecutor(new ArenaCommandHandler());
-		
-		getCommand("pg").setExecutor(new PlayerCommandHandler());
 
+		//getConfig().options().copyDefaults(true);
+
+		saveConfig();
+
+		getLogger().info("has been enabled");
+
+		// Register Commands
+		getCommand("arena").setExecutor(new ArenaCommandHandler());
+		getCommand("pg").setExecutor(new PlayerCommandHandler());
 		getCommand("class").setExecutor(new ClassCommandHandler());
-		
+
+		// Register listeners
 		getServer().getPluginManager().registerEvents(new JoinArena(), this);
 		getServer().getPluginManager().registerEvents(new PortalCreation(), this);
 		getServer().getPluginManager().registerEvents(new BlockBreak(), this);
@@ -71,36 +68,31 @@ public class Core extends JavaPlugin {
 		getServer().getPluginManager().registerEvents(new Teleportation(), this);
 		getServer().getPluginManager().registerEvents(new PvP(), this);
 		getServer().getPluginManager().registerEvents(new Drops(), this);
-		
+
 		try {
-
 			arenas.save(new File(getDataFolder(), "arenas.yml"));
-
 		} catch (IOException e) {
-
 			e.printStackTrace();
 		}
-		
+
 	}
-	
-	public void onDisable(){
 
+	public void onDisable() {
+		// Cleanup
 		TaskInjector.cancelAll();
-
 		ArenaManager.cleanupAllArenas();
-		
-		getLogger().info("is disabled");
-		
+
+		// Save
 		saveConfig();
-		
+
 		try {
-
 			arenas.save(new File(getDataFolder(), "arenas.yml"));
-
 		} catch (IOException e) {
-
 			e.printStackTrace();
 		}
-		
+
+		//
+		getLogger().info("is disabled");
+
 	}
 }
