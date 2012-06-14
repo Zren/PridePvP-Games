@@ -26,7 +26,7 @@ public class ClassCommandHandler implements CommandExecutor {
 		scout = new ClassScout();
 		soldier = new ClassSoldier();
 
-
+		playerClasses.add(new Archer());
 	}
 
 	List<String> classes = new ArrayList<String>();
@@ -39,18 +39,11 @@ public class ClassCommandHandler implements CommandExecutor {
 		if (ArenaManager.isInArena(player.getName()) && ArenaManager.getArenaPlayerIsIn(player.getName()).getState().canChangeClass()) {
 
 			if (args.length > 0) {
+				String className = args[0];
+				boolean selectedAClass = selectClass(player, className);
 
-				if (args[0].equalsIgnoreCase("Archer")) {
-
-					return (archer.onCommand(sender, cmd, label, args));
-
-				} else if (args[0].equalsIgnoreCase("Scout")) {
-
-					return (scout.onCommand(sender, cmd, label, args));
-
-				} else if (args[0].equalsIgnoreCase("Soldier")) {
-
-					return (soldier.onCommand(sender, cmd, label, args));
+				if (!selectedAClass) {
+					// TODO Incorrect choice.
 				}
 
 			} else {
