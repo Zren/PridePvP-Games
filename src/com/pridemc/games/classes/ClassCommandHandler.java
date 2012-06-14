@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ClassCommandHandler implements CommandExecutor {
-	List<PlayerClass> playerClasses = new ArrayList<PlayerClass>();
+
 
 
 	ClassArcher archer;
@@ -22,91 +22,81 @@ public class ClassCommandHandler implements CommandExecutor {
 	ClassSoldier soldier;
 
 	public ClassCommandHandler() {
+		//TODO REMOVE
 		archer = new ClassArcher();
 		scout = new ClassScout();
 		soldier = new ClassSoldier();
-
-		playerClasses.add(new Archer());
 	}
 
-	List<String> classes = new ArrayList<String>();
+
 
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-
 		Player player = (Player) sender;
 
-		if (ArenaManager.isInArena(player.getName()) && ArenaManager.getArenaPlayerIsIn(player.getName()).getState().canChangeClass()) {
+		if (!ArenaManager.isInArena(player.getName()) || !ArenaManager.getArenaPlayerIsIn(player.getName()).getState().canChangeClass()) {
+			MessageUtil.sendMsg(player, ChatColor.RED + "You can't use this command now!");
+			return true;
+		}
 
-			if (args.length > 0) {
-				String className = args[0];
-				boolean selectedAClass = selectClass(player, className);
+		if (PlayerClassManager.hasAClass(player.getName())) {
+			MessageUtil.sendMsg(player, ChatColor.RED + "You have already selected a class!");
+			return true;
+		}
 
-				if (!selectedAClass) {
-					// TODO Incorrect choice.
-				}
-
-			} else {
-
-				classes.add("Archer");
-
-				classes.add("Scout");
-
-				classes.add("Soldier");
-
-				if (sender.hasPermission("pg.class.heavy")) {
-
-					classes.add("Heavy");
-
-				}
-				if (sender.hasPermission("pg.class.spy")) {
-
-					classes.add("Spy");
-				}
-
-				if (!classes.isEmpty()) {
-
-					sender.sendMessage(ChatColor.GOLD + "[" + ChatColor.AQUA + "Pride Games" + ChatColor.GOLD + "] " +
-							ChatColor.YELLOW + "The following classes are available for you. Type " + ChatColor.GOLD + "/class <classname>" + ChatColor.YELLOW + " to select that class");
-
-					sender.sendMessage(ChatColor.AQUA + "Classes: " + ChatColor.YELLOW + classes);
-
-					classes.clear();
-
-				} else {
-
-					sender.sendMessage(ChatColor.GOLD + "[" + ChatColor.AQUA + "Pride Games" + ChatColor.GOLD + "] " +
-							ChatColor.YELLOW + ChatColor.RED + "Uh oh! You don't have any classes! Please contact an admin!");
-
-				}
-			}
-
-		} else {
-
-			sender.sendMessage(ChatColor.GOLD + "[" + ChatColor.AQUA + "Pride Games" + ChatColor.GOLD + "] " +
-
-					ChatColor.RED + "You can't use this command now!");
+		if (args.length == 0) {
+			sendListOfAvailableClasses(player);
+		} else if (args.length > 0) { // If statement unnecessary
+			String className = args[0];
+			boolean selectedAClass = selectClass(player, className);
+			if (!selectedAClass)
+				sendListOfAvailableClasses(player);
 		}
 		return true;
 	}
 
-
-	public boolean selectClass(Player player, String className) {
-		for (PlayerClass playerClass : playerClasses) {
-			if (playerClass.getName().equalsIgnoreCase(className)) {
-				// Reset player's inventory and effects.
-				PlayerClass.resetPlayer(player);
-
-				// Equip the player with select equipment
-				playerClass.equipPlayer(player);
-
-				// Msg
-				String msg = ChatColor.YELLOW + "You have selected the " + ChatColor.AQUA + "%s" + ChatColor.YELLOW + " class!";
-				MessageUtil.sendMsg(player, msg, className);
-
-				return true;
+	public static void sendListOfAvailableClasses(Player player) {
+		List<PlayerClass> availableClasses = PlayerClassManager.getPlayerClassesAvaiableToPlayer(player);
+		if (availableClasses.isEmpty()) {
+			MessageUtil.sendMsg(player, ChatColor.RED + "Uh oh! You don't have any classes available! Please contact an admin!");
+		} else {
+			List<String> classNames = new ArrayList<String>();
+			for (PlayerClass playerClass : availableClasses) {
+				classNames.add(playerClass.getName());
 			}
+			MessageUtil.sendMsg(player, "The following classes are available for you. Type " + ChatColor.GOLD + "/class <classname>" + ChatColor.YELLOW + " to select that class");
+			MessageUtil.sendMsg(player, ChatColor.AQUA + "Classes: " + ChatColor.YELLOW + "%s", classNames);
 		}
-		return false;
+	}
+
+
+	public static boolean selectClass(Player player, String className) {
+		PlayerClass playerClass = PlayerClassManager.getPlayerClassByName(className);
+		if (playerClass == null) {
+			String msg = ChatColor.AQUA + "%s" + ChatColor.RED + " isn't a class!";
+			MessageUtil.sendMsg(player, msg, className);
+			return false;
+		}
+
+		if (!playerClass.canSelectAsClass(player)) {
+			String msg = ChatColor.RED + "You don't have permission to select the " + ChatColor.AQUA + "%s" + ChatColor.RED + " class!";
+			MessageUtil.sendMsg(player, msg, playerClass.getName());
+			return false;
+		}
+
+		// Register the selected class so a player can't choose another.
+		PlayerClassManager.registerPlayerClass(player.getName(), playerClass.getName());
+
+		// Reset player's inventory and effects.
+		PlayerClass.resetPlayer(player);
+
+		// Equip the player with select equipment
+		playerClass.equipPlayer(player);
+
+		// Msg
+		String msg = ChatColor.YELLOW + "You have selected the " + ChatColor.AQUA + "%s" + ChatColor.YELLOW + " class!";
+		MessageUtil.sendMsg(player, msg, playerClass.getName());
+
+		return true;
 	}
 }

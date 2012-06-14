@@ -3,6 +3,7 @@ package com.pridemc.games.arena;
 import ca.xshade.bukkit.util.ConfigUtil;
 import ca.xshade.bukkit.util.TaskInjector;
 import com.pridemc.games.Core;
+import com.pridemc.games.classes.PlayerClassManager;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
@@ -88,6 +89,7 @@ public class ArenaManager {
 	public static void _removePlayerFromArena(Player player) {
 		Arena arena = ArenaManager.getArenaPlayerIsIn(player.getName());
 		arena.setPlayerAsDead(player.getName());
+		PlayerClassManager.unregisterPlayerClass(player.getName());
 		getInstance().playerToArenaMap.remove(player.getName());
 	}
 

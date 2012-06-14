@@ -7,8 +7,8 @@ import org.bukkit.entity.Player;
  * Date: 6/14/12
  */
 public abstract class PlayerClass {
-	String name;
-	String permission = null;
+	private String name;
+	private String permission = null;
 
 	public boolean canSelectAsClass(Player player) {
 		if (permission == null || permission.isEmpty())
