@@ -151,6 +151,7 @@ public class ArenaManager {
 	}
 
 	public static void cleanUpPlayer(Player player) {
+		player.teleport(getGlobalSpawnPoint());
 		_removePlayerFromArena(player.getName());
 		player.getInventory().clear();
 	}
@@ -167,7 +168,6 @@ public class ArenaManager {
 	public static void cleanupArena(Arena arena) {
 		for (Player player : ArenaUtil.asBukkitPlayerList(arena.getArenaPlayers())) {
 			cleanUpPlayer(player);
-			player.teleport(getGlobalSpawnPoint());
 		}
 
 		arena.getTaskInjector().cancelAll();
