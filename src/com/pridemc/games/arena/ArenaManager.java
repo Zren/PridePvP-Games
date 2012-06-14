@@ -85,11 +85,11 @@ public class ArenaManager {
 		}
 	}
 
-	public static void _removePlayerFromArena(Player player) {
-		Arena arena = ArenaManager.getArenaPlayerIsIn(player.getName());
-		arena.setPlayerAsDead(player.getName());
-		PlayerClassManager.unregisterPlayerClass(player.getName());
-		getInstance().playerToArenaMap.remove(player.getName());
+	public static void _removePlayerFromArena(String playerName) {
+		Arena arena = ArenaManager.getArenaPlayerIsIn(playerName);
+		arena.setPlayerAsDead(playerName);
+		PlayerClassManager.unregisterPlayerClass(playerName);
+		getInstance().playerToArenaMap.remove(playerName);
 	}
 
 	public static Arena getArenaPlayerIsIn(String playerName) {
@@ -138,7 +138,7 @@ public class ArenaManager {
 	}
 
 	public static void cleanUpPlayer(Player player) {
-		_removePlayerFromArena(player);
+		_removePlayerFromArena(player.getName());
 		player.getInventory().clear();
 	}
 

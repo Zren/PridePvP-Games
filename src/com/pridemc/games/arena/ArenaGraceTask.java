@@ -1,5 +1,9 @@
 package com.pridemc.games.arena;
 
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
+
+import java.util.HashSet;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -15,6 +19,17 @@ public class ArenaGraceTask implements Runnable {
 
 	@Override
 	public void run() {
+		// Kill / Kick any offline players that left during countdown.
+		for (ArenaPlayer arenaPlayer : new HashSet<ArenaPlayer>(arena.getArenaPlayers())) {
+			String playerName = arenaPlayer.getName();
+			Player player = Bukkit.getPlayer(playerName);
+			if (player == null || !player.isOnline()) {
+				// Is offline
+				ArenaManager._removePlayerFromArena(playerName);
+			}
+		}
+
+		// Check for auto win conditions
 		if (ArenaManager.checkEndGameConditions(arena)) {
 			ArenaManager.endGame(arena);
 			return;
