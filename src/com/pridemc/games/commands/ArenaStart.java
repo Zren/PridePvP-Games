@@ -6,13 +6,10 @@ import com.pridemc.games.arena.MessageUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 
 public class ArenaStart {
 
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-
-		Player player = (Player) sender;
 
 		if (args.length < 2) {
 			MessageUtil.sendMsg(sender, ChatColor.RED + "Please specify an arena.");
