@@ -10,8 +10,10 @@ public abstract class PlayerClass {
 	String name;
 	String permission = null;
 
-	public void equip(Player player) {
-
+	public boolean canSelectAsClass(Player player) {
+		if (permission == null || permission.isEmpty())
+			return true;
+		return player.hasPermission(permission);
 	}
 
 	public String getName() {

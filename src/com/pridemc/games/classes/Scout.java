@@ -4,14 +4,16 @@ import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.potion.Potion;
+import org.bukkit.potion.PotionType;
 
 /**
  * Author: Chris H (Zren / Shade)
  * Date: 6/14/12
  */
-public class Archer extends PlayerClass {
-	public Archer() {
-		setName("Archer");
+public class Scout extends PlayerClass {
+	public Scout() {
+		setName("Scout");
 	}
 
 	@Override
@@ -24,16 +26,9 @@ public class Archer extends PlayerClass {
 		player.getActivePotionEffects().clear();
 
 		// Give Equipment
-		player.getInventory().setHelmet(new ItemStack(Material.IRON_HELMET, 1));
-		player.getInventory().addItem(new ItemStack(Material.GOLDEN_APPLE, 1));
-
-		ItemStack bowItemStack = new ItemStack(Material.BOW, 1);
-		bowItemStack.addEnchantment(Enchantment.ARROW_DAMAGE, 1);
-		player.getInventory().addItem(bowItemStack);
-
-		for (int i = 0; i < 20; i++) {
-			player.getInventory().addItem(new ItemStack(Material.ARROW, 64));
-		}
+		player.getInventory().setChestplate(new ItemStack(Material.GOLD_CHESTPLATE, 1));
+		player.getInventory().addItem(new ItemStack(Material.STONE_SWORD, 1));
+		player.getInventory().addItem(new Potion(PotionType.SPEED).toItemStack(1));
 
 		// Add Effect to all bows in Inv.
 		for(ItemStack bow : player.getInventory().getContents()){
