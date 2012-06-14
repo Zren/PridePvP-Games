@@ -46,6 +46,11 @@ public class Arena {
 		public boolean canPvP() {
 			return canPvP;
 		}
+
+		public boolean canDropItems() {
+			// Player can't drop items when the arena is in a state to choose classes.
+			return !canChangeClass();
+		}
 	}
 
 	private String name;

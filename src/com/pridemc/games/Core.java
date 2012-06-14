@@ -61,24 +61,16 @@ public class Core extends JavaPlugin {
 		getCommand("class").setExecutor(new ClassCommandHandler());
 		
 		getServer().getPluginManager().registerEvents(new JoinArena(), this);
-		
 		getServer().getPluginManager().registerEvents(new PortalCreation(), this);
-		
 		getServer().getPluginManager().registerEvents(new BlockBreak(), this);
-		
 		getServer().getPluginManager().registerEvents(new BlockPlace(), this);
-
 		getServer().getPluginManager().registerEvents(new Explosions(), this);
-		
 		getServer().getPluginManager().registerEvents(new Join(), this);
-		
 		getServer().getPluginManager().registerEvents(new PlayerDeath(), this);
-		
 		getServer().getPluginManager().registerEvents(new Quit(), this);
-		
 		getServer().getPluginManager().registerEvents(new Teleportation(), this);
-
 		getServer().getPluginManager().registerEvents(new PvP(), this);
+		getServer().getPluginManager().registerEvents(new Drops(), this);
 		
 		try {
 
