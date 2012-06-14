@@ -3,9 +3,11 @@ package com.pridemc.games.arena;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -20,7 +22,11 @@ public class MessageUtil {
 		sender.sendMessage(pluginPrefix + formattedMsg);
 	}
 
-	public static void sendMsgToAll(List<CommandSender> senders, String msg, Object ... args) {
+	public static void sendMsgToAllPlayers(Collection<Player> senders, String msg, Object ... args) {
+		sendMsgToAll((ArrayList<CommandSender>)senders, msg, args);
+	}
+
+	public static void sendMsgToAll(Collection<CommandSender> senders, String msg, Object ... args) {
 		String formattedMsg = String.format(msg, args);
 		for (CommandSender sender : senders) {
 			sender.sendMessage(pluginPrefix + formattedMsg);

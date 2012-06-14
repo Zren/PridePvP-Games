@@ -50,14 +50,27 @@ public class ArenaManager {
 		//
 		_addPlayerToArena(player, arena);
 
+		// Teleport player
+		player.teleport(arena.getSpawnPoint());
+
 
 		// Reaction
-		String msg = "Joined Arena %s [%d / %d]";
-		MessageUtil.sendMsg(player, msg, arena.getName(), arena.getArenaPlayers().size(), arena.getMaxNumPlayers());
+		String msg = "%s joined the arena Arena %s [%d / %d].";
+		List<Player> playersInArena = ArenaUtil.asBukkitPlayerList(arena.getArenaPlayers());
+		MessageUtil.sendMsgToAllPlayers(playersInArena, msg,
+				player.getName(), arena.getName(), arena.getArenaPlayers().size(), arena.getMaxNumPlayers());
+
+
+		msg = "Do /class to pick your class.";
+		MessageUtil.sendMsg(player, msg, arena.getName());
 
 		if (arena.getState() == Arena.State.WAITING_FOR_PLAYERS && arena.getArenaPlayers().size() >= arena.getPlayersRequiredToStart()) {
 			// Arena is ready
 			arena.startTaskFor(Arena.State.COUNTING_DOWN);
+		} else {
+			msg = "This arena requires %d more players to begin.";
+			MessageUtil.sendMsgToAllPlayers(playersInArena, msg,
+					arena.getPlayersRequiredToStart() - arena.getArenaPlayers().size());
 		}
 	}
 
