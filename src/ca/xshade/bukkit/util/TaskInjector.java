@@ -94,7 +94,8 @@ public class TaskInjector {
 	 * @see java.util.Timer#cancel()
 	 */
 	public void cancelAll() {
-		getTimer().cancel();
+		timer.cancel();
+		timer = new Timer();
 	}
 
 	/**
