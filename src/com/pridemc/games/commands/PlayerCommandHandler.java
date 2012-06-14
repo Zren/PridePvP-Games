@@ -15,6 +15,7 @@ public class PlayerCommandHandler implements CommandExecutor {
 	PlayerShopSet setshop;
 	PlayerList list;
 	PlayerLeave leave;
+	PlayerVoteStart votestart;
 
 	public PlayerCommandHandler() {
 		help = new PlayerHelp();
@@ -24,7 +25,7 @@ public class PlayerCommandHandler implements CommandExecutor {
 		setshop = new PlayerShopSet();
 		list = new PlayerList();
 		leave = new PlayerLeave();
-
+		votestart = new PlayerVoteStart();
 	}
 
 	@Override
@@ -51,6 +52,9 @@ public class PlayerCommandHandler implements CommandExecutor {
 
 			} else if (args[0].equalsIgnoreCase("leave")) {
 				return (leave.onCommand(sender, cmd, label, args));
+
+			} else if (args[0].equalsIgnoreCase("votestart")) {
+				return (votestart.onCommand(sender, cmd, label, args));
 
 			}
 		} else {

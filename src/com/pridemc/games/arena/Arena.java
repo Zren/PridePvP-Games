@@ -61,6 +61,7 @@ public class Arena {
 	private Map<ArenaPlayer, Location> playerSpawnPoints = new HashMap<ArenaPlayer, Location>();
 	public long startTime = System.currentTimeMillis();
 	private TaskInjector taskInjector = TaskInjector.newInstance();
+	public Set<ArenaPlayer> playersVotingToStart = new HashSet<ArenaPlayer>();
 
 	final int DEFAULT_MAX_PLAYERS = 15;
 	final int DEFAULT_PLAYERS_TO_START = 8;
@@ -191,11 +192,38 @@ public class Arena {
 
 
 	public void setPlayerAsDead(String playerName) {
-		arenaPlayers.remove(getArenaPlayer(playerName));
+		ArenaPlayer arenaPlayer = getArenaPlayer(playerName);
+		arenaPlayers.remove(arenaPlayer);
+		playersVotingToStart.remove(arenaPlayer);
+	}
+
+	public boolean voteToStart(String playerName) {
+		ArenaPlayer arenaPlayer = getArenaPlayer(playerName);
+		if (playersVotingToStart.contains(arenaPlayer))
+			return false;
+
+		playersVotingToStart.add(arenaPlayer);
+		return true;
+	}
+
+	public int getNumVotesToStart() {
+		return playersVotingToStart.size();
+	}
+
+	public int getNumVotesRequiredToStart() {
+		return 2; //TODO
+	}
+
+	public int getNumVotesNeededToStart() {
+		return getNumVotesRequiredToStart() - getNumVotesToStart();
 	}
 
 	public int getPlayersRequiredToStart() {
 		return Core.arenas.getInt(getName() + ".playercount to start", DEFAULT_PLAYERS_TO_START);
+	}
+
+	public Set<ArenaPlayer> getPlayersVotingToStart() {
+		return playersVotingToStart;
 	}
 
 	public Vector getRegionMinimum() {

@@ -11,6 +11,7 @@ public class PlayerHelp implements CommandExecutor {
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
 		MessageUtil.sendMsg(sender, "Type /pg + [arg].");
 		MessageUtil.sendMsgNoPrefix(sender, "/pg list");
+		MessageUtil.sendMsgNoPrefix(sender, "/pg votestart");
 		MessageUtil.sendMsgNoPrefix(sender, "/pg leave");
 		MessageUtil.sendMsgNoPrefix(sender, "/pg spawn");
 		if (sender.hasPermission("pridegames.admin"))

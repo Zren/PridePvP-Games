@@ -29,7 +29,7 @@ public class MessageUtil {
 	}
 
 	public static void sendMsgToAllPlayers(Collection<Player> senders, String msg, Object ... args) {
-		sendMsgToAll((ArrayList<CommandSender>)senders, msg, args);
+		sendMsgToAll(new ArrayList<CommandSender>(senders), msg, args);
 	}
 
 	public static void sendMsgToAll(Collection<CommandSender> senders, String msg, Object ... args) {

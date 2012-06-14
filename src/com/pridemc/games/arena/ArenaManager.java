@@ -86,7 +86,7 @@ public class ArenaManager {
 			ArenaManager.cleanUpPlayer(player);
 
 			List<Player> arenaPlayersAlive = ArenaUtil.asBukkitPlayerList(arena.getArenaPlayers());
-			String msg = ChatColor.AQUA + "%s" + " has died! " + ChatColor.AQUA + "%d" + ChatColor.YELLOW + " players remaining!";
+			String msg = ChatColor.AQUA + "%s" + ChatColor.YELLOW + " has died! " + ChatColor.AQUA + "%d" + ChatColor.YELLOW + " players remaining!";
 			MessageUtil.sendMsgToAll(new ArrayList<CommandSender>(arenaPlayersAlive), msg, player.getName(), arenaPlayersAlive.size());
 			for (Player playerInArena : arenaPlayersAlive) {
 				playerInArena.getWorld().createExplosion(playerInArena.getLocation().add(0, 15, 0), 2); // Explosion above player?
@@ -103,6 +103,29 @@ public class ArenaManager {
 		arena.setPlayerAsDead(playerName);
 		PlayerClassManager.unregisterPlayerClass(playerName);
 		getInstance().playerToArenaMap.remove(playerName);
+	}
+
+	public static void voteToStart(Player player) {
+		Arena arena = ArenaManager.getArenaPlayerIsIn(player.getName());
+
+		if (!arena.getState().canJoin()) {
+			MessageUtil.sendMsg(player, ChatColor.RED + "You can't use this command now!");
+			return;
+		}
+
+		boolean votedToStart = arena.voteToStart(player.getName());
+		if (votedToStart) {
+			List<Player> playersInArena = ArenaUtil.asBukkitPlayerList(arena.getArenaPlayers());
+			String msg = ChatColor.AQUA + "%s" + ChatColor.YELLOW + " voted to start the arena now. " + ChatColor.AQUA + "%d" + ChatColor.YELLOW + " more votes required.";
+			MessageUtil.sendMsgToAllPlayers(playersInArena, msg, player.getName(), arena.getNumVotesNeededToStart());
+
+			if (arena.getNumVotesToStart() >= arena.getNumVotesRequiredToStart()) {
+				arena.startTaskFor(Arena.State.INITIAL_GRACE_PERIOD);
+			}
+		} else {
+			String msg = ChatColor.RED + "Already voted. " + ChatColor.AQUA + "%d" + ChatColor.YELLOW + " more votes required.";
+			MessageUtil.sendMsg(player, msg, arena.getNumVotesNeededToStart());
+		}
 	}
 
 	public static Arena getArenaPlayerIsIn(String playerName) {
@@ -132,7 +155,8 @@ public class ArenaManager {
 			Player winningPlayer = alivePlayers.get(0).getPlayer();
 
 			// Msg
-			MessageUtil.sendMsgToServer("%s won in the %s arena!", winningPlayer.getDisplayName(), arena.getName());
+			String msg = ChatColor.AQUA + "%s" + ChatColor.YELLOW + " won in the %s arena!";
+			MessageUtil.sendMsgToServer(msg, winningPlayer.getDisplayName(), arena.getName());
 
 			// Cleanup remaining players.
 			for (ArenaPlayer arenaPlayer : alivePlayers) {
