@@ -65,6 +65,7 @@ public class Arena {
 
 	final int DEFAULT_MAX_PLAYERS = 15;
 	final int DEFAULT_PLAYERS_TO_START = 8;
+	final int DEFAULT_VOTES_TO_START = 2;
 
 	public Arena(String name) {
 		this.name = name;
@@ -74,6 +75,7 @@ public class Arena {
 		}
 		Core.arenas.set(getName() + ".max players", getMaxNumPlayers());
 		Core.arenas.set(getName() + ".playercount to start", getPlayersRequiredToStart());
+		Core.arenas.set(getName() + ".votes to start", getNumVotesRequiredToStart());
 		if (!Core.arenas.isSet(getName() + ".spawnpoint"))
 			Core.arenas.createSection(getName() + ".spawnpoint");
 		if (!Core.arenas.isSet(getName() + ".world"))
@@ -211,7 +213,7 @@ public class Arena {
 	}
 
 	public int getNumVotesRequiredToStart() {
-		return 2; //TODO
+		return Core.arenas.getInt(getName() + ".votes to start", DEFAULT_VOTES_TO_START);
 	}
 
 	public int getNumVotesNeededToStart() {
