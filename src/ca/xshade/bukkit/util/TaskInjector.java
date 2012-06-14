@@ -12,7 +12,8 @@ import java.util.Timer;
  * 
  * @author Zren (Shade / Chris)
  * @version 2.0
- * 
+ *
+ * TODO: Link all sub instances statically for a static cancelAll that kills all timers?
  */
 public class TaskInjector {
 
