@@ -82,7 +82,8 @@ public class ArenaManager {
 
 	public static void removePlayerFromArena(Player player) {
 		Arena arena = ArenaManager.getArenaPlayerIsIn(player.getName());
-		if (arena != null && !arena.getState().canJoin()) { // If in a game state where the players can't join, then remove the player
+		//if (arena != null && !arena.getState().canJoin()) { // If in a game state where the players can't join, then remove the player
+		if (arena != null) {
 			ArenaManager.cleanUpPlayer(player);
 
 			List<Player> arenaPlayersAlive = ArenaUtil.asBukkitPlayerList(arena.getArenaPlayers());
