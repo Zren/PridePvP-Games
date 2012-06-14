@@ -1,7 +1,5 @@
 package com.pridemc.games.arena;
 
-import ca.xshade.bukkit.util.TaskInjector;
-
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -38,6 +36,6 @@ public class ArenaGraceTask implements Runnable {
 		MessageUtil.sendMsgToServer("[Arena - %s] Grace Period Started - Game Begins in %s minute(s).", arena.getName(), minutes);
 
 		//
-		TaskInjector.schedule(new ArenaStartGameTask(arena), delayMillis);
+		arena.getTaskInjector().schedule(new ArenaStartGameTask(arena), delayMillis);
 	}
 }

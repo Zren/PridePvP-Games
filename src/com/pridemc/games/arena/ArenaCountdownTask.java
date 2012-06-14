@@ -1,7 +1,5 @@
 package com.pridemc.games.arena;
 
-import ca.xshade.bukkit.util.TaskInjector;
-
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -27,7 +25,7 @@ public class ArenaCountdownTask implements Runnable {
 		MessageUtil.sendMsgToServer("[Arena - %s] Game starts in %d minute(s).", arena.getName(), minutes);
 
 		//
-		TaskInjector.schedule(new ArenaGraceTask(arena), delayMillis);
+		arena.getTaskInjector().schedule(new ArenaGraceTask(arena), delayMillis);
 
 	}
 }

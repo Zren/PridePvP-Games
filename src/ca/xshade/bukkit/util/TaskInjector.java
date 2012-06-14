@@ -11,7 +11,7 @@ import java.util.Timer;
  * @see java.util.Timer
  * 
  * @author Zren (Shade / Chris)
- * @version 1.0
+ * @version 2.0
  * 
  */
 public class TaskInjector {
@@ -46,12 +46,44 @@ public class TaskInjector {
 	}
 
 	/**
+	 * A factory method to generate new instances of TaskInjector with the same plugin.
+	 *
+	 * @return a new instance of TaskInjector with the same plugin as the static instance.
+	 */
+	public static TaskInjector newInstance() {
+		if (TaskInjector.instance == null)
+			throw new IllegalArgumentException();
+		if (TaskInjector.instance.getTimer() == null)
+			throw new IllegalArgumentException();
+
+		return new TaskInjector(instance.getPlugin());
+	}
+
+	/**
 	 * Gets the timer.
 	 * 
 	 * @return the timer
 	 */
-	public static Timer getTimer() {
-		return instance.timer;
+	public Timer getTimer() {
+		return timer;
+	}
+
+	/**
+	 * Gets the plugin
+	 *
+	 * @return the plugin
+	 */
+	public Plugin getPlugin() {
+		return plugin;
+	}
+
+	/**
+	 * Gets the current static instance of the TaskInjector
+	 *
+	 * @return the instance
+	 */
+	public static TaskInjector getInstance() {
+		return instance;
 	}
 
 	/**
@@ -60,8 +92,8 @@ public class TaskInjector {
 	 * 
 	 * @see java.util.Timer#cancel()
 	 */
-	public static void cancelAll() {
-		TaskInjector.getTimer().cancel();
+	public void cancelAll() {
+		getTimer().cancel();
 	}
 
 	/**
@@ -75,8 +107,8 @@ public class TaskInjector {
 	 * @param time
 	 *            the time
 	 */
-	public static void schedule(Runnable runnable, Date time) {
-		TaskInjector.getTimer().schedule(new InjectIntoBukkitTask(instance.plugin, runnable), time);
+	public void schedule(Runnable runnable, Date time) {
+		getTimer().schedule(new InjectIntoBukkitTask(plugin, runnable), time);
 	}
 
 	/**
@@ -92,8 +124,8 @@ public class TaskInjector {
 	 * @param period
 	 *            the period
 	 */
-	public static void schedule(Runnable runnable, Date firstTime, long period) {
-		TaskInjector.getTimer().schedule(new InjectIntoBukkitTask(instance.plugin, runnable), firstTime, period);
+	public void schedule(Runnable runnable, Date firstTime, long period) {
+		getTimer().schedule(new InjectIntoBukkitTask(plugin, runnable), firstTime, period);
 	}
 
 	/**
@@ -106,8 +138,8 @@ public class TaskInjector {
 	 * @param delay
 	 *            the delay
 	 */
-	public static void schedule(Runnable runnable, long delay) {
-		TaskInjector.getTimer().schedule(new InjectIntoBukkitTask(instance.plugin, runnable), delay);
+	public void schedule(Runnable runnable, long delay) {
+		getTimer().schedule(new InjectIntoBukkitTask(plugin, runnable), delay);
 	}
 
 	/**
@@ -123,8 +155,8 @@ public class TaskInjector {
 	 * @param period
 	 *            the period
 	 */
-	public static void schedule(Runnable runnable, long delay, long period) {
-		TaskInjector.getTimer().schedule(new InjectIntoBukkitTask(instance.plugin, runnable), delay, period);
+	public void schedule(Runnable runnable, long delay, long period) {
+		getTimer().schedule(new InjectIntoBukkitTask(plugin, runnable), delay, period);
 	}
 
 	/**
@@ -140,8 +172,8 @@ public class TaskInjector {
 	 * @param period
 	 *            the period
 	 */
-	public static void scheduleAtFixedRate(Runnable runnable, Date firstTime, long period) {
-		TaskInjector.getTimer().scheduleAtFixedRate(new InjectIntoBukkitTask(instance.plugin, runnable), firstTime, period);
+	public void scheduleAtFixedRate(Runnable runnable, Date firstTime, long period) {
+		getTimer().scheduleAtFixedRate(new InjectIntoBukkitTask(plugin, runnable), firstTime, period);
 	}
 
 	/**
@@ -157,7 +189,7 @@ public class TaskInjector {
 	 * @param period
 	 *            the period
 	 */
-	public static void scheduleAtFixedRate(Runnable runnable, long delay, long period) {
-		TaskInjector.getTimer().scheduleAtFixedRate(new InjectIntoBukkitTask(instance.plugin, runnable), delay, period);
+	public void scheduleAtFixedRate(Runnable runnable, long delay, long period) {
+		getTimer().scheduleAtFixedRate(new InjectIntoBukkitTask(plugin, runnable), delay, period);
 	}
 }

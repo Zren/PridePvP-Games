@@ -1,7 +1,6 @@
 package com.pridemc.games.arena;
 
 import ca.xshade.bukkit.util.ConfigUtil;
-import ca.xshade.bukkit.util.TaskInjector;
 import com.pridemc.games.Core;
 import com.pridemc.games.classes.PlayerClassManager;
 import org.bukkit.ChatColor;
@@ -58,7 +57,7 @@ public class ArenaManager {
 
 		if (arena.getState() == Arena.State.WAITING_FOR_PLAYERS && arena.getArenaPlayers().size() >= arena.getPlayersRequiredToStart()) {
 			// Arena is ready
-			TaskInjector.schedule(new ArenaCountdownTask(arena), 0);
+			arena.getTaskInjector().schedule(new ArenaCountdownTask(arena), 0);
 		}
 	}
 
@@ -157,6 +156,8 @@ public class ArenaManager {
 			cleanUpPlayer(player);
 			player.teleport(getGlobalSpawnPoint());
 		}
+
+		arena.getTaskInjector().cancelAll();
 
 		RevertManager.revertArena(arena);
 	}

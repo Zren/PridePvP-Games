@@ -1,6 +1,7 @@
 package com.pridemc.games.arena;
 
 import ca.xshade.bukkit.util.ConfigUtil;
+import ca.xshade.bukkit.util.TaskInjector;
 import com.pridemc.games.Core;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -59,6 +60,7 @@ public class Arena {
 	private State state = State.WAITING_FOR_PLAYERS;
 	private Map<ArenaPlayer, Location> playerSpawnPoints = new HashMap<ArenaPlayer, Location>();
 	public long startTime = System.currentTimeMillis();
+	private TaskInjector taskInjector = TaskInjector.newInstance();
 
 	final int DEFAULT_MAX_PLAYERS = 15;
 	final int DEFAULT_PLAYERS_TO_START = 8;
@@ -202,5 +204,9 @@ public class Arena {
 
 	public Vector getRegionMaximum() {
 		return Core.arenas.getVector(getName() + ".region.max", new Vector());
+	}
+
+	public TaskInjector getTaskInjector() {
+		return taskInjector;
 	}
 }

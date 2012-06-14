@@ -79,7 +79,7 @@ public class Core extends JavaPlugin {
 
 	public void onDisable() {
 		// Cleanup
-		TaskInjector.cancelAll();
+		TaskInjector.getInstance().cancelAll();
 		ArenaManager.cleanupAllArenas();
 
 		// Save
