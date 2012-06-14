@@ -16,10 +16,16 @@ import java.util.List;
  */
 public class MessageUtil {
 	public static final String pluginPrefix = ChatColor.GOLD + "[" + ChatColor.AQUA + "Pride Games" + ChatColor.GOLD + "] " + ChatColor.YELLOW;
+	public static final String pluginNoPrefixColor = ChatColor.YELLOW.toString();
 
 	public static void sendMsg(CommandSender sender, String msg, Object ... args) {
 		String formattedMsg = String.format(msg, args);
 		sender.sendMessage(pluginPrefix + formattedMsg);
+	}
+
+	public static void sendMsgNoPrefix(CommandSender sender, String msg, Object ... args) {
+		String formattedMsg = String.format(msg, args);
+		sender.sendMessage(pluginNoPrefixColor + formattedMsg);
 	}
 
 	public static void sendMsgToAllPlayers(Collection<Player> senders, String msg, Object ... args) {

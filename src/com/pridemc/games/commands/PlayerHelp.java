@@ -1,6 +1,6 @@
 package com.pridemc.games.commands;
 
-import org.bukkit.ChatColor;
+import com.pridemc.games.arena.MessageUtil;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -9,15 +9,15 @@ public class PlayerHelp implements CommandExecutor {
 	
 	
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-		
-		sender.sendMessage(ChatColor.GOLD + "[" + ChatColor.AQUA + "Pride Games" + ChatColor.GOLD + "] " + 
-				ChatColor.YELLOW + "Type /pg + [arg].");
-		
-		/*
-		 * Add player help messages here
-		 */
-		
-		
+		MessageUtil.sendMsg(sender, "Type /pg + [arg].");
+		MessageUtil.sendMsgNoPrefix(sender, "/pg list");
+		MessageUtil.sendMsgNoPrefix(sender, "/pg leave");
+		MessageUtil.sendMsgNoPrefix(sender, "/pg spawn");
+		if (sender.hasPermission("pridegames.admin"))
+			MessageUtil.sendMsgNoPrefix(sender, "/pg setspawn");
+		MessageUtil.sendMsgNoPrefix(sender, "/pg shop");
+		if (sender.hasPermission("pridegames.admin"))
+			MessageUtil.sendMsgNoPrefix(sender, "/pg setshop");
 		
 		return true;
 	}
