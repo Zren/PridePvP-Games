@@ -38,6 +38,10 @@ public class Archer extends PlayerClass {
 
 		player.getInventory().addItem(new ItemStack(Material.GOLDEN_APPLE, 1));
 
+		for (int i = 0; i < 20; i++) {
+			player.getInventory().addItem(new ItemStack(Material.ARROW, 64));
+		}
+
 		// Add Effect to all bows in Inv.
 		for(ItemStack bow : player.getInventory().getContents()){
 			if(bow != null){
