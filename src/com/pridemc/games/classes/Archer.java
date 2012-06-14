@@ -16,13 +16,6 @@ public class Archer extends PlayerClass {
 
 	@Override
 	public void equipPlayer(Player player) {
-		// Clear First
-		player.getInventory().clear();
-		player.getInventory().setArmorContents(null);
-
-		// Reset Player Effects
-		player.getActivePotionEffects().clear();
-
 		// Give Equipment
 		player.getInventory().setHelmet(new ItemStack(Material.IRON_HELMET, 1));
 		player.getInventory().addItem(new ItemStack(Material.GOLDEN_APPLE, 1));

@@ -15,13 +15,6 @@ public class Soldier extends PlayerClass {
 
 	@Override
 	public void equipPlayer(Player player) {
-		// Clear First
-		player.getInventory().clear();
-		player.getInventory().setArmorContents(null);
-
-		// Reset Player Effects
-		player.getActivePotionEffects().clear();
-
 		// Give Equipment
 		player.getInventory().setChestplate(new ItemStack(Material.LEATHER_CHESTPLATE, 1));
 		player.getInventory().setLeggings(new ItemStack(Material.LEATHER_LEGGINGS, 1));

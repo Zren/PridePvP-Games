@@ -94,6 +94,9 @@ public class ClassCommandHandler implements CommandExecutor {
 	public boolean selectClass(Player player, String className) {
 		for (PlayerClass playerClass : playerClasses) {
 			if (playerClass.getName().equalsIgnoreCase(className)) {
+				// Reset player's inventory and effects.
+				PlayerClass.resetPlayer(player);
+
 				// Equip the player with select equipment
 				playerClass.equipPlayer(player);
 

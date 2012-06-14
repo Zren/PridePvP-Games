@@ -32,5 +32,14 @@ public abstract class PlayerClass {
 		this.permission = permission;
 	}
 
+	public static void resetPlayer(Player player) {
+		// Clear Inventory + Armor
+		player.getInventory().clear();
+		player.getInventory().setArmorContents(null);
+
+		// Reset Player Effects
+		player.getActivePotionEffects().clear();
+	}
+
 	public abstract void equipPlayer(Player player);
 }

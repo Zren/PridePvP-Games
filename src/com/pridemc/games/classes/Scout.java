@@ -17,13 +17,6 @@ public class Scout extends PlayerClass {
 
 	@Override
 	public void equipPlayer(Player player) {
-		// Clear First
-		player.getInventory().clear();
-		player.getInventory().setArmorContents(null);
-
-		// Reset Player Effects
-		player.getActivePotionEffects().clear();
-
 		// Give Equipment
 		player.getInventory().setChestplate(new ItemStack(Material.GOLD_CHESTPLATE, 1));
 		player.getInventory().addItem(new ItemStack(Material.STONE_SWORD, 1));
