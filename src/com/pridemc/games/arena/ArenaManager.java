@@ -59,7 +59,7 @@ public class ArenaManager {
 
 
 		// Reaction
-		String msg = "%s joined the arena Arena %s [%d / %d].";
+		String msg = ChatColor.AQUA + "%s" + ChatColor.YELLOW + " joined the arena Arena %s [%d / %d].";
 		List<Player> playersInArena = ArenaUtil.asBukkitPlayerList(arena.getArenaPlayers());
 		MessageUtil.sendMsgToAllPlayers(playersInArena, msg,
 				player.getName(), arena.getName(), arena.getArenaPlayers().size(), arena.getMaxNumPlayers());
