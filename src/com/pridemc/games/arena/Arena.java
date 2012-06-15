@@ -174,7 +174,7 @@ public class Arena {
 		//TODO: Check that spawnPoints.size() > players.size();
 
 		for (int i = 0; i < players.size(); i++) {
-			playerSpawnPoints.put(players.get(i), spawnPoints.get(i));
+			playerSpawnPoints.put(players.get(i), spawnPoints.get(i % spawnPoints.size()));
 		}
 	}
 
