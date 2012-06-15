@@ -1,5 +1,6 @@
 package com.pridemc.games.commands;
 
+import ca.xshade.bukkit.util.ChatUtil;
 import com.pridemc.games.arena.MessageUtil;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -10,15 +11,15 @@ public class PlayerHelp implements CommandExecutor {
 	
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
 		MessageUtil.sendMsg(sender, "Type /pg + [arg].");
-		MessageUtil.sendMsgNoPrefix(sender, "/pg list");
-		MessageUtil.sendMsgNoPrefix(sender, "/pg votestart");
-		MessageUtil.sendMsgNoPrefix(sender, "/pg leave");
-		MessageUtil.sendMsgNoPrefix(sender, "/pg spawn");
+		MessageUtil.sendMsgNoPrefix(sender, ChatUtil.formatCommand("", "/pg", "list", "Outside of an arena, it lists the current arenas. Inside of one, it lists the remaining players."));
+		MessageUtil.sendMsgNoPrefix(sender, ChatUtil.formatCommand("", "/pg", "votestart", "Vote to start the arena."));
+		MessageUtil.sendMsgNoPrefix(sender, ChatUtil.formatCommand("", "/pg", "leave", "Leave your arena."));
+		MessageUtil.sendMsgNoPrefix(sender, ChatUtil.formatCommand("", "/pg", "spawn", "Go to spawn."));
 		if (sender.hasPermission("pridegames.admin"))
-			MessageUtil.sendMsgNoPrefix(sender, "/pg setspawn");
-		MessageUtil.sendMsgNoPrefix(sender, "/pg shop");
-		if (sender.hasPermission("pridegames.admin"))
-			MessageUtil.sendMsgNoPrefix(sender, "/pg setshop");
+			MessageUtil.sendMsgNoPrefix(sender, ChatUtil.formatCommand("", "/pg", "setspawn", "Set the spawn point."));
+		//MessageUtil.sendMsgNoPrefix(sender, ChatUtil.formatCommand("", "/pg", "shop", "Teleport to the shop."));
+		//if (sender.hasPermission("pridegames.admin"))
+		//	MessageUtil.sendMsgNoPrefix(sender, ChatUtil.formatCommand("", "/pg", "setshop", "Set the shop location."));
 		
 		return true;
 	}

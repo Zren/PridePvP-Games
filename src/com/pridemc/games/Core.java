@@ -68,6 +68,7 @@ public class Core extends JavaPlugin {
 		getServer().getPluginManager().registerEvents(new Teleportation(), this);
 		getServer().getPluginManager().registerEvents(new PvP(), this);
 		getServer().getPluginManager().registerEvents(new Drops(), this);
+		getServer().getPluginManager().registerEvents(new Food(), this);
 
 		try {
 			arenas.save(new File(getDataFolder(), "arenas.yml"));

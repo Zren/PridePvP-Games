@@ -1,5 +1,7 @@
 package com.pridemc.games.arena;
 
+import org.bukkit.ChatColor;
+
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -23,6 +25,13 @@ public class ArenaCountdownTask implements Runnable {
 		// Msg.
 		long minutes = TimeUnit.MILLISECONDS.toMinutes(delayMillis);
 		MessageUtil.sendMsgToServer("[Arena - %s] Game starts in %d minute(s).", arena.getName(), minutes);
+
+		for (ArenaPlayer arenaPlayer : arena.getArenaPlayers()) {
+			if (!arenaPlayer.hasAClass()) {
+				String msg = "Do " + ChatColor.AQUA + "/class" + ChatColor.YELLOW + " to pick your class.";
+				MessageUtil.sendMsg(arenaPlayer.getPlayer(), msg, arena.getName());
+			}
+		}
 
 		//
 		arena.scheduleTaskFor(Arena.State.INITIAL_GRACE_PERIOD, delayMillis);

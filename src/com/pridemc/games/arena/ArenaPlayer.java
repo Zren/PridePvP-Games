@@ -1,5 +1,6 @@
 package com.pridemc.games.arena;
 
+import com.pridemc.games.classes.PlayerClassManager;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
@@ -38,5 +39,9 @@ public class ArenaPlayer {
 	@Override
 	public int hashCode() {
 		return getName().hashCode();
+	}
+
+	public boolean hasAClass() {
+		return PlayerClassManager.hasAClass(getName());
 	}
 }

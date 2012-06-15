@@ -224,6 +224,10 @@ public class Arena {
 		return Core.arenas.getInt(getName() + ".playercount to start", DEFAULT_PLAYERS_TO_START);
 	}
 
+	public int getNumPlayersNeededToStart() {
+		return Math.max(0, getNumPlayersNeededToStart() - getNumPlayers()); // limit lower bounds to 0.
+	}
+
 	public Set<ArenaPlayer> getPlayersVotingToStart() {
 		return playersVotingToStart;
 	}
@@ -245,6 +249,7 @@ public class Arena {
 	}
 
 	public void scheduleTaskFor(State state, long delay) {
+		getTaskInjector().cancelAll();
 		switch (state) {
 			case COUNTING_DOWN:
 				getTaskInjector().schedule(new ArenaCountdownTask(this), delay);

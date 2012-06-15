@@ -65,7 +65,7 @@ public class ArenaManager {
 				player.getName(), arena.getName(), arena.getArenaPlayers().size(), arena.getMaxNumPlayers());
 
 
-		msg = "Do /class to pick your class.";
+		msg = "Do " + ChatColor.AQUA + "/class" + ChatColor.YELLOW + " to pick your class.";
 		MessageUtil.sendMsg(player, msg, arena.getName());
 
 		if (arena.getState() == Arena.State.WAITING_FOR_PLAYERS && arena.getArenaPlayers().size() >= arena.getPlayersRequiredToStart()) {
@@ -73,8 +73,7 @@ public class ArenaManager {
 			arena.startTaskFor(Arena.State.COUNTING_DOWN);
 		} else {
 			msg = "This arena requires %d more players to begin automatically. Do " + ChatColor.AQUA + "/pg votestart" + ChatColor.YELLOW + " to start now.";
-			MessageUtil.sendMsgToAllPlayers(playersInArena, msg,
-					arena.getPlayersRequiredToStart() - arena.getArenaPlayers().size());
+			MessageUtil.sendMsgToAllPlayers(playersInArena, msg, arena.getNumPlayersNeededToStart());
 		}
 	}
 
@@ -123,7 +122,7 @@ public class ArenaManager {
 		boolean votedToStart = arena.voteToStart(player.getName());
 		if (votedToStart) {
 			List<Player> playersInArena = ArenaUtil.asBukkitPlayerList(arena.getArenaPlayers());
-			String msg = ChatColor.AQUA + "%s" + ChatColor.YELLOW + " voted to start the arena now. " + ChatColor.AQUA + "%d" + ChatColor.YELLOW + " more votes required.";
+			String msg = ChatColor.AQUA + "%s" + ChatColor.YELLOW + " voted to start the arena now. " + ChatColor.AQUA + "%d" + ChatColor.YELLOW + " more votes required (" + ChatColor.AQUA + "/pg votestart" + ChatColor.YELLOW + ").";
 			MessageUtil.sendMsgToAllPlayers(playersInArena, msg, player.getName(), arena.getNumVotesNeededToStart());
 		} else {
 			String msg = ChatColor.RED + "Already voted. " + ChatColor.AQUA + "%d" + ChatColor.YELLOW + " more votes required.";
