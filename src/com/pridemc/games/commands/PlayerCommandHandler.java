@@ -17,6 +17,7 @@ public class PlayerCommandHandler implements CommandExecutor {
 	PlayerVoteStart votestart;
 
 	DevArenaStates devArenaStates = new DevArenaStates();
+	ArenaStart devArenaStart = new ArenaStart();
 
 	public PlayerCommandHandler() {
 		help = new PlayerHelp();
@@ -58,6 +59,9 @@ public class PlayerCommandHandler implements CommandExecutor {
 
 			} else if (args[0].equalsIgnoreCase("state")) {
 				return (devArenaStates.onCommand(sender, cmd, label, args));
+
+			} else if (args[0].equalsIgnoreCase("devstart")) {
+				return (devArenaStart.onCommand(sender, cmd, label, args));
 
 			}
 		} else {
