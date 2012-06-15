@@ -68,7 +68,7 @@ public class ArenaManager {
 		msg = "Do " + ChatColor.AQUA + "/class" + ChatColor.YELLOW + " to pick your class.";
 		MessageUtil.sendMsg(player, msg, arena.getName());
 
-		if (arena.getState() == Arena.State.WAITING_FOR_PLAYERS && arena.getArenaPlayers().size() >= arena.getPlayersRequiredToStart()) {
+		if (arena.getState() == Arena.State.WAITING_FOR_PLAYERS && arena.getArenaPlayers().size() >= arena.getNumPlayersRequiredToStart()) {
 			// Arena is ready
 			arena.startTaskFor(Arena.State.COUNTING_DOWN);
 		} else {

@@ -74,7 +74,7 @@ public class Arena {
 			Core.arenas.createSection(getName());
 		}
 		Core.arenas.set(getName() + ".max players", getMaxNumPlayers());
-		Core.arenas.set(getName() + ".playercount to start", getPlayersRequiredToStart());
+		Core.arenas.set(getName() + ".playercount to start", getNumPlayersRequiredToStart());
 		Core.arenas.set(getName() + ".votes to start", getNumVotesRequiredToStart());
 		if (!Core.arenas.isSet(getName() + ".spawnpoint"))
 			Core.arenas.createSection(getName() + ".spawnpoint");
@@ -220,12 +220,12 @@ public class Arena {
 		return Math.max(0, getNumVotesRequiredToStart() - getNumVotesToStart()); // limit lower bounds to 0.
 	}
 
-	public int getPlayersRequiredToStart() {
+	public int getNumPlayersRequiredToStart() {
 		return Core.arenas.getInt(getName() + ".playercount to start", DEFAULT_PLAYERS_TO_START);
 	}
 
 	public int getNumPlayersNeededToStart() {
-		return Math.max(0, getNumPlayersNeededToStart() - getNumPlayers()); // limit lower bounds to 0.
+		return Math.max(0, getNumPlayersRequiredToStart() - getNumPlayers()); // limit lower bounds to 0.
 	}
 
 	public Set<ArenaPlayer> getPlayersVotingToStart() {
