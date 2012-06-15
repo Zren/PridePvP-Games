@@ -20,7 +20,7 @@ public class Arena {
 	public enum State {
 		WAITING_FOR_PLAYERS(true, false, true, false),
 		COUNTING_DOWN(true, false, true, false),
-		INITIAL_GRACE_PERIOD(false, true, false, false),
+		INITIAL_GRACE_PERIOD(false, true, true, false),
 		RUNNING_GAME(false, true, false, true);
 
 		private boolean canJoin, canEditBlocks, canChangeClass, canPvP;
