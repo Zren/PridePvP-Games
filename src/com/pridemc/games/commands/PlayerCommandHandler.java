@@ -9,22 +9,22 @@ import org.bukkit.command.CommandSender;
 public class PlayerCommandHandler implements CommandExecutor {
 
 	PlayerHelp help;
-	PlayerSpawn spawn;
 	PlayerSpawnSet setspawn;
 	PlayerShop shop;
 	PlayerShopSet setshop;
 	PlayerList list;
-	PlayerLeave leave;
+	PlayerLeave leaveToSpawn;
 	PlayerVoteStart votestart;
+
+	DevArenaStates devArenaStates = new DevArenaStates();
 
 	public PlayerCommandHandler() {
 		help = new PlayerHelp();
-		spawn = new PlayerSpawn();
 		setspawn = new PlayerSpawnSet();
 		shop = new PlayerShop();
 		setshop = new PlayerShopSet();
 		list = new PlayerList();
-		leave = new PlayerLeave();
+		leaveToSpawn = new PlayerLeave();
 		votestart = new PlayerVoteStart();
 	}
 
@@ -36,7 +36,7 @@ public class PlayerCommandHandler implements CommandExecutor {
 				return (help.onCommand(sender, cmd, label, args));
 
 			} else if (args[0].equalsIgnoreCase("spawn")) {
-				return (spawn.onCommand(sender, cmd, label, args));
+				return (leaveToSpawn.onCommand(sender, cmd, label, args));
 
 			} else if (args[0].equalsIgnoreCase("setspawn")) {
 				return (setspawn.onCommand(sender, cmd, label, args));
@@ -51,10 +51,13 @@ public class PlayerCommandHandler implements CommandExecutor {
 				return (list.onCommand(sender, cmd, label, args));
 
 			} else if (args[0].equalsIgnoreCase("leave")) {
-				return (leave.onCommand(sender, cmd, label, args));
+				return (leaveToSpawn.onCommand(sender, cmd, label, args));
 
 			} else if (args[0].equalsIgnoreCase("votestart")) {
 				return (votestart.onCommand(sender, cmd, label, args));
+
+			} else if (args[0].equalsIgnoreCase("state")) {
+				return (devArenaStates.onCommand(sender, cmd, label, args));
 
 			}
 		} else {

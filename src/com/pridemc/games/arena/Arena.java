@@ -217,7 +217,7 @@ public class Arena {
 	}
 
 	public int getNumVotesNeededToStart() {
-		return getNumVotesRequiredToStart() - getNumVotesToStart();
+		return Math.max(0, getNumVotesRequiredToStart() - getNumVotesToStart()); // limit lower bounds to 0.
 	}
 
 	public int getPlayersRequiredToStart() {

@@ -2,6 +2,7 @@ package com.pridemc.games.arena;
 
 import ca.xshade.bukkit.util.ConfigUtil;
 import com.pridemc.games.Core;
+import com.pridemc.games.classes.PlayerClass;
 import com.pridemc.games.classes.PlayerClassManager;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -50,6 +51,9 @@ public class ArenaManager {
 		//
 		_addPlayerToArena(player, arena);
 
+		// Reset player inv and state.
+		PlayerClass.resetPlayer(player);
+
 		// Teleport player
 		player.teleport(arena.getSpawnPoint());
 
@@ -68,7 +72,7 @@ public class ArenaManager {
 			// Arena is ready
 			arena.startTaskFor(Arena.State.COUNTING_DOWN);
 		} else {
-			msg = "This arena requires %d more players to begin.";
+			msg = "This arena requires %d more players to begin automatically. Do " + ChatColor.AQUA + "/pg votestart" + ChatColor.YELLOW + " to start now.";
 			MessageUtil.sendMsgToAllPlayers(playersInArena, msg,
 					arena.getPlayersRequiredToStart() - arena.getArenaPlayers().size());
 		}
@@ -101,6 +105,8 @@ public class ArenaManager {
 
 	public static void _removePlayerFromArena(String playerName) {
 		Arena arena = ArenaManager.getArenaPlayerIsIn(playerName);
+		if (arena == null)
+			return;
 		arena.setPlayerAsDead(playerName);
 		PlayerClassManager.unregisterPlayerClass(playerName);
 		getInstance().playerToArenaMap.remove(playerName);
@@ -119,13 +125,13 @@ public class ArenaManager {
 			List<Player> playersInArena = ArenaUtil.asBukkitPlayerList(arena.getArenaPlayers());
 			String msg = ChatColor.AQUA + "%s" + ChatColor.YELLOW + " voted to start the arena now. " + ChatColor.AQUA + "%d" + ChatColor.YELLOW + " more votes required.";
 			MessageUtil.sendMsgToAllPlayers(playersInArena, msg, player.getName(), arena.getNumVotesNeededToStart());
-
-			if (arena.getNumVotesToStart() >= arena.getNumVotesRequiredToStart()) {
-				arena.startTaskFor(Arena.State.INITIAL_GRACE_PERIOD);
-			}
 		} else {
 			String msg = ChatColor.RED + "Already voted. " + ChatColor.AQUA + "%d" + ChatColor.YELLOW + " more votes required.";
 			MessageUtil.sendMsg(player, msg, arena.getNumVotesNeededToStart());
+		}
+
+		if (arena.getNumVotesToStart() >= arena.getNumVotesRequiredToStart()) {
+			arena.startTaskFor(Arena.State.INITIAL_GRACE_PERIOD);
 		}
 	}
 
@@ -178,7 +184,7 @@ public class ArenaManager {
 	public static void cleanUpPlayer(Player player) {
 		player.teleport(getGlobalSpawnPoint());
 		_removePlayerFromArena(player.getName());
-		player.getInventory().clear();
+		PlayerClass.resetPlayer(player);
 	}
 
 	public static void resetArena(String arenaName) {
