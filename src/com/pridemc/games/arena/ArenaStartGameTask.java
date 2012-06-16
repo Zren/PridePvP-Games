@@ -21,6 +21,9 @@ public class ArenaStartGameTask implements Runnable {
 		//
 		arena.setState(Arena.State.RUNNING_GAME);
 
+		//
+		arena.update();
+
 		// Msg
 		MessageUtil.sendMsgToServer("[Arena - %s] Game Started", arena.getName());
 	}

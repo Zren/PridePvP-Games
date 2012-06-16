@@ -14,6 +14,10 @@ public class ConfigUtil {
 	public static Location getLocationFromVector(Configuration node, String vectorPath, String worldPath) {
 		Vector vector = node.getVector(vectorPath);
 		String worldName = node.getString(worldPath);
+
+		if (vector == null || worldName == null)
+			return null;
+
 		World world = Bukkit.getWorld(worldName);
 		return vector.toLocation(world);
 	}

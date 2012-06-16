@@ -1,11 +1,13 @@
 package com.pridemc.games.arena;
 
 import ca.xshade.bukkit.util.ConfigUtil;
+import ca.xshade.bukkit.util.TaskInjector;
 import com.pridemc.games.Core;
 import com.pridemc.games.classes.PlayerClass;
 import com.pridemc.games.classes.PlayerClassManager;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.block.Block;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -75,6 +77,9 @@ public class ArenaManager {
 			msg = "This arena requires %d more players to begin automatically. Do " + ChatColor.AQUA + "/pg votestart" + ChatColor.YELLOW + " to start now.";
 			MessageUtil.sendMsgToAllPlayers(playersInArena, msg, arena.getNumPlayersNeededToStart());
 		}
+
+		//
+		TaskInjector.getInstance().schedule(new UpdateArenaTask(arena), 0);
 	}
 
 	private static void _addPlayerToArena(Player player, Arena arena) {
@@ -95,6 +100,9 @@ public class ArenaManager {
 			for (Player playerInArena : arenaPlayersAlive) {
 				playerInArena.getWorld().createExplosion(playerInArena.getLocation().add(0, 15, 0), 2); // Explosion above player?
 			}
+
+			//
+			TaskInjector.getInstance().schedule(new UpdateArenaTask(arena), 0);
 
 			if (ArenaManager.checkEndGameConditions(arena)) {
 				ArenaManager.endGame(arena);
@@ -178,6 +186,7 @@ public class ArenaManager {
 
 	public static void addArena(Arena arena) {
 		getInstance().arenaMap.put(arena.getName(), arena);
+		TaskInjector.getInstance().schedule(new UpdateArenaTask(arena), 0);
 	}
 
 	public static void cleanUpPlayer(Player player) {
@@ -213,5 +222,16 @@ public class ArenaManager {
 
 	public static Collection<Arena> getArenas() {
 		return getInstance().arenaMap.values();
+	}
+
+	public static Arena getArenaFromPortalBlock(Block block) {
+		for (Arena arena : getArenas()) {
+			if (!arena.hasPortal())
+				continue;
+
+			if (arena.getPortal().isTeleBlock(block))
+				return arena;
+		}
+		return null;
 	}
 }

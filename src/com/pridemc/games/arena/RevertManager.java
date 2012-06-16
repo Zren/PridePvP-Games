@@ -1,6 +1,7 @@
 package com.pridemc.games.arena;
 
 import org.bukkit.Bukkit;
+import org.bukkit.World;
 import org.bukkit.plugin.Plugin;
 import uk.co.oliwali.HawkEye.*;
 import uk.co.oliwali.HawkEye.callbacks.RollbackCallback;
@@ -22,12 +23,15 @@ public class RevertManager {
 		Plugin plugin = Bukkit.getServer().getPluginManager().getPlugin("HawkEye");
 		HawkEye hawkEye = (HawkEye)plugin;
 
+		World arenaWorld = arena.getWorld();
+		if (arenaWorld == null)
+			return;
 
 		//Setup a SearchParser instance and set values
 		SearchParser parser = new SearchParser();
 		parser.minLoc = arena.getRegionMinimum();
 		parser.maxLoc = arena.getRegionMaximum();
-		parser.worlds = new String[]{arena.getWorld().getName()};
+		parser.worlds = new String[]{arenaWorld.getName()};
 		parser.actions = Arrays.asList(new DataType[]{DataType.BLOCK_BREAK, DataType.BLOCK_PLACE});
 
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");

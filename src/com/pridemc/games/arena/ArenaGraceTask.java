@@ -44,9 +44,11 @@ public class ArenaGraceTask implements Runnable {
 		//
 		arena.setState(Arena.State.INITIAL_GRACE_PERIOD);
 
-		long delayMillis = ArenaConfig.getGracePeriodDelay();
+		//
+		arena.update();
 
 		// Msg.
+		long delayMillis = ArenaConfig.getGracePeriodDelay();
 		long minutes = TimeUnit.MILLISECONDS.toMinutes(delayMillis);
 		MessageUtil.sendMsgToServer("[Arena - %s] Grace Period Started - Game Begins in %s minute(s).", arena.getName(), minutes);
 

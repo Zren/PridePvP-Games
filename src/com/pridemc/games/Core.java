@@ -57,6 +57,8 @@ public class Core extends JavaPlugin {
 		getCommand("class").setExecutor(new ClassCommandHandler());
 
 		// Register listeners
+		getServer().getPluginManager().registerEvents(new PlayerMoveListener(), this);
+
 		getServer().getPluginManager().registerEvents(new JoinArena(), this);
 		getServer().getPluginManager().registerEvents(new PortalCreation(), this);
 		getServer().getPluginManager().registerEvents(new BlockBreak(), this);
@@ -69,6 +71,7 @@ public class Core extends JavaPlugin {
 		getServer().getPluginManager().registerEvents(new PvP(), this);
 		getServer().getPluginManager().registerEvents(new Drops(), this);
 		getServer().getPluginManager().registerEvents(new Food(), this);
+		getServer().getPluginManager().registerEvents(new PortalSignListener(), this);
 
 		try {
 			arenas.save(new File(getDataFolder(), "arenas.yml"));

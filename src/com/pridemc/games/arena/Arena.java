@@ -3,6 +3,7 @@ package com.pridemc.games.arena;
 import ca.xshade.bukkit.util.ConfigUtil;
 import ca.xshade.bukkit.util.TaskInjector;
 import com.pridemc.games.Core;
+import com.pridemc.games.portal.ArenaPortal;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -16,16 +17,21 @@ import java.util.*;
  * Date: 6/2/12
  */
 public class Arena {
-
 	public enum State {
-		WAITING_FOR_PLAYERS(true, false, true, false),
-		COUNTING_DOWN(true, false, true, false),
-		INITIAL_GRACE_PERIOD(false, true, true, false),
-		RUNNING_GAME(false, true, false, true);
+		WAITING_FOR_PLAYERS("§1Open",
+				true, false, true, false),
+		COUNTING_DOWN("§1Starting Soon",
+				true, false, true, false),
+		INITIAL_GRACE_PERIOD("§4Started|Grace",
+				false, true, true, false),
+		RUNNING_GAME("§4Running",
+				false, true, false, true);
 
 		private boolean canJoin, canEditBlocks, canChangeClass, canPvP;
+		private String shortName;
 
-		private State(boolean canJoin, boolean canEditBlocks, boolean canChangeClass, boolean canPvP) {
+		private State(String shortName, boolean canJoin, boolean canEditBlocks, boolean canChangeClass, boolean canPvP) {
+			setShortName(shortName);
 			this.canJoin = canJoin;
 			this.canEditBlocks = canEditBlocks;
 			this.canChangeClass = canChangeClass;
@@ -52,6 +58,18 @@ public class Arena {
 			// Player can't drop items when the arena is in a state to choose classes.
 			return !canChangeClass();
 		}
+
+		/**
+		 * Limits to 16 chars for use on a sign.
+		 * @return
+		 */
+		private void setShortName(String shortName) {
+			this.shortName = shortName;
+		}
+
+		public String getShortName() {
+			return shortName;
+		}
 	}
 
 	private String name;
@@ -62,6 +80,7 @@ public class Arena {
 	public long startTime = System.currentTimeMillis();
 	private TaskInjector taskInjector = TaskInjector.newInstance();
 	public Set<ArenaPlayer> playersVotingToStart = new HashSet<ArenaPlayer>();
+	public ArenaPortal portal = null;
 
 	final int DEFAULT_MAX_PLAYERS = 15;
 	final int DEFAULT_PLAYERS_TO_START = 8;
@@ -82,6 +101,7 @@ public class Arena {
 			Core.arenas.createSection(getName() + ".world");
 		Core.arenas.set(getName() + ".region.min", getRegionMinimum());
 		Core.arenas.set(getName() + ".region.max", getRegionMaximum());
+		setPortalBlockLocation(getPortalBlockLocation());
 		setState(State.WAITING_FOR_PLAYERS);
 		ArenaConfig.saveArenaConfig();
 	}
@@ -266,5 +286,56 @@ public class Arena {
 			default:
 				break;
 		}
+	}
+
+	public Location getPortalBlockLocation() {
+		return ConfigUtil.getLocationFromVector(Core.arenas, getName() + ".portal.vector", getName() + ".portal.world");
+	}
+
+	public void setPortalBlockLocation(Location location) {
+		if (location == null)
+			return;
+
+		Core.arenas.set(getName() + ".portal.world", location.getWorld().getName());
+		Core.arenas.set(getName() + ".portal.vector", location.toVector());
+		/*try {
+			Core.arenas.save(new File(Core.instance.getDataFolder(), "arenas.yml"));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}*/
+
+		Location portalBlockLocation = getPortalBlockLocation();
+		loadPortal(portalBlockLocation);
+	}
+
+	public void loadPortal(Location location) {
+		if (location == null)
+			return;
+
+		if (hasPortal()) {
+			//TODO
+		}
+
+		this.portal = new ArenaPortal(location.getBlock());
+	}
+
+	public void update() {
+		updatePortal();
+	}
+
+
+	public void updatePortal() {
+		if (!hasPortal())
+			return;
+
+		portal.update(this);
+	}
+
+	public boolean hasPortal() {
+		return portal != null;
+	}
+
+	public ArenaPortal getPortal() {
+		return portal;
 	}
 }

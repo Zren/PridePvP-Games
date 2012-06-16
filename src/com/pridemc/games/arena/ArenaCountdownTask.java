@@ -20,9 +20,11 @@ public class ArenaCountdownTask implements Runnable {
 		//
 		arena.setState(Arena.State.COUNTING_DOWN);
 
-		long delayMillis = ArenaConfig.getCountdownDelay();
+		//
+		arena.update();
 
 		// Msg.
+		long delayMillis = ArenaConfig.getCountdownDelay();
 		long minutes = TimeUnit.MILLISECONDS.toMinutes(delayMillis);
 		MessageUtil.sendMsgToServer("[Arena - %s] Game starts in %d minute(s).", arena.getName(), minutes);
 
