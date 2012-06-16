@@ -1,5 +1,6 @@
 package com.pridemc.games.commands;
 
+import ca.xshade.bukkit.util.ChatUtil;
 import com.pridemc.games.arena.*;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -7,26 +8,13 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 public class PlayerList {
-
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
 		if (sender instanceof Player && ArenaManager.isInArena(sender.getName())) {
 			Arena arena = ArenaManager.getArenaPlayerIsIn(sender.getName());
-			String msg = "Players in %s: %s";
-			MessageUtil.sendMsg(sender, msg, arena.getName(), ArenaUtil.getPlayerDisplayNames(arena));
+			String msg = "Players in " + ChatColor.AQUA + "%s" + ChatColor.YELLOW + ": " + ChatColor.GRAY + "[%s" + ChatColor.GRAY + "]";
+			MessageUtil.sendMsg(sender, msg, arena.getName(), ChatUtil.list(ArenaUtil.getPlayerDisplayNames(arena), ChatColor.WHITE, ChatColor.GRAY));
 		} else {
-			MessageUtil.sendMsg(sender, "Arenas:");
-
-			for(String arenaName : ArenaConfig.getArenaNames()){
-				Arena arena = ArenaManager.getArena(arenaName);
-
-				if (arena.getState().canJoin()) {
-					String msg = ChatColor.AQUA + "%s" + ChatColor.YELLOW + " : " + ChatColor.GREEN + "OPEN";
-					MessageUtil.sendMsgNoPrefix(sender, msg, arena.getName());
-				} else {
-					String msg = ChatColor.AQUA + "%s" + ChatColor.YELLOW + " : " + ChatColor.RED + "IN PROGRESS" + ChatColor.YELLOW + " : " + ChatColor.GOLD + "%d" + ChatColor.YELLOW + "/" + ChatColor.GOLD + "%d";
-					MessageUtil.sendMsgNoPrefix(sender, msg, arena.getName(), arena.getNumPlayers(), arena.getMaxNumPlayers());
-				}
-			}
+			return new PlayerListArenas().onCommand(sender, cmd, label, args);
 		}
 		
 		return true;

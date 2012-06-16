@@ -1,6 +1,10 @@
 package ca.xshade.bukkit.util;
 
+import ca.xshade.util.StringUtil;
 import org.bukkit.ChatColor;
+
+import java.util.ArrayList;
+import java.util.Collection;
 
 /**
  * Author: Chris H (Zren / Shade)
@@ -17,6 +21,14 @@ public class ChatUtil {
 		if (help.length() > 0)
 			out += " " + ChatColor.GRAY + ": " + help;
 		return out;
+	}
+
+	public static String list(Collection<String> items, ChatColor itemColour, ChatColor delimeterColor) {
+		Collection<String> formattedItems = new ArrayList<String>();
+		for (String item : items) {
+			formattedItems.add(itemColour + item);
+		}
+		return StringUtil.join(formattedItems, delimeterColor + ", ");
 	}
 }
 

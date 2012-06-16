@@ -11,7 +11,8 @@ public class PlayerHelp implements CommandExecutor {
 	
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
 		MessageUtil.sendMsg(sender, "Type /pg + [arg].");
-		MessageUtil.sendMsgNoPrefix(sender, ChatUtil.formatCommand("", "/pg", "list", "Outside of an arena, it lists the current arenas. Inside of one, it lists the remaining players."));
+		MessageUtil.sendMsgNoPrefix(sender, ChatUtil.formatCommand("", "/pg", "arenas", "List all the arenas."));
+		MessageUtil.sendMsgNoPrefix(sender, ChatUtil.formatCommand("", "/pg", "list", "List the remaining players in the arena."));
 		MessageUtil.sendMsgNoPrefix(sender, ChatUtil.formatCommand("", "/pg", "votestart", "Vote to start the arena."));
 		MessageUtil.sendMsgNoPrefix(sender, ChatUtil.formatCommand("", "/pg", "leave", "Leave your arena."));
 		MessageUtil.sendMsgNoPrefix(sender, ChatUtil.formatCommand("", "/pg", "spawn", "Go to spawn."));
