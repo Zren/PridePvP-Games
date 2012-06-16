@@ -11,6 +11,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Author: Chris H (Zren / Shade)
@@ -123,6 +125,16 @@ public class Arena {
 	}
 
 	protected void setState(State state) {
+		if (state.ordinal() < this.state.ordinal()) {
+			Logger logger = Logger.getLogger(getClass().getName());
+			logger.warning("-----------------------------------------------------------");
+			logger.warning("-------------------       BUG REPORT     ------------------");
+			logger.warning("-----------------------------------------------------------");
+			logger.warning(String.format("Arena %s is trying to go back to an earlier gamestate. %s -> %s", getName(), state.name(), this.state.name()));
+			logger.log(Level.WARNING, "Stack Trace Below", Thread.currentThread().getStackTrace());
+			logger.warning("-----------------------------------------------------------");
+		}
+
 		this.state = state;
 
 		//Persist it? all the other code looks at it. <- Bad reason.

@@ -60,6 +60,10 @@ public class PlayerCommandHandler implements CommandExecutor {
 			} else if (args[0].equalsIgnoreCase("state")) {
 				return (devArenaStates.onCommand(sender, cmd, label, args));
 
+			} else if (args[0].equalsIgnoreCase("arenas")) {
+				return new PlayerListArenas().onCommand(sender, cmd, label, args);
+
+			// ---------------------------------------
 			} else if (args[0].equalsIgnoreCase("devstart")) {
 				return (devArenaStart.onCommand(sender, cmd, label, args));
 
