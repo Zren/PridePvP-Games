@@ -66,6 +66,7 @@ public class Core extends JavaPlugin {
 		getServer().getPluginManager().registerEvents(new Explosions(), this);
 		getServer().getPluginManager().registerEvents(new Join(), this);
 		getServer().getPluginManager().registerEvents(new PlayerDeath(), this);
+		getServer().getPluginManager().registerEvents(new PlayerRespawn(), this);
 		getServer().getPluginManager().registerEvents(new Quit(), this);
 		getServer().getPluginManager().registerEvents(new Teleportation(), this);
 		getServer().getPluginManager().registerEvents(new PvP(), this);

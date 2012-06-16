@@ -98,7 +98,7 @@ public class ArenaManager {
 		Arena arena = ArenaManager.getArenaPlayerIsIn(player.getName());
 		//if (arena != null && !arena.getState().canJoin()) { // If in a game state where the players can't join, then remove the player
 		if (arena != null) {
-			ArenaManager.cleanUpPlayer(player);
+			ArenaManager._removePlayerFromArena(player.getName());
 
 			List<Player> arenaPlayersAlive = ArenaUtil.asBukkitPlayerList(arena.getArenaPlayers());
 
@@ -198,6 +198,10 @@ public class ArenaManager {
 
 	public static void cleanUpPlayer(Player player) {
 		player.teleport(getGlobalSpawnPoint());
+		_cleanUpPlayer(player);
+	}
+
+	public static void _cleanUpPlayer(Player player) {
 		_removePlayerFromArena(player.getName());
 		PlayerClass.resetPlayer(player);
 	}
