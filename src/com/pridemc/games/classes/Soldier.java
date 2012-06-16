@@ -11,6 +11,7 @@ import org.bukkit.inventory.ItemStack;
 public class Soldier extends PlayerClass {
 	public Soldier() {
 		setName("Soldier");
+		setDescription("Leather armour and a Stone Sword.");
 	}
 
 	@Override

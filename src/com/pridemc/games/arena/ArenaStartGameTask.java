@@ -22,6 +22,7 @@ public class ArenaStartGameTask implements Runnable {
 		arena.setState(Arena.State.RUNNING_GAME);
 
 		//
+		EffectUtil.explosionOverPlayers(arena.getBukkitPlayers());
 		arena.update();
 
 		// Msg

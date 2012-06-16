@@ -9,6 +9,7 @@ import org.bukkit.entity.Player;
 public abstract class PlayerClass {
 	private String name;
 	private String permission = null;
+	private String description = "";
 
 	public boolean canSelectAsClass(Player player) {
 		if (permission == null || permission.isEmpty())
@@ -42,4 +43,12 @@ public abstract class PlayerClass {
 	}
 
 	public abstract void equipPlayer(Player player);
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
 }

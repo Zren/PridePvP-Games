@@ -15,7 +15,7 @@ public class ChatUtil {
 		if (subCommand.length() > 0)
 			out += " " + ChatColor.AQUA + subCommand;
 		if (help.length() > 0)
-			out += " " + ChatColor.GRAY + " : " + help;
+			out += " " + ChatColor.GRAY + ": " + help;
 		return out;
 	}
 }

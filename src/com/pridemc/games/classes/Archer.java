@@ -12,6 +12,7 @@ import org.bukkit.inventory.ItemStack;
 public class Archer extends PlayerClass {
 	public Archer() {
 		setName("Archer");
+		setDescription("Enchanted Bow & 10 Arrows, Iron Helm, and a Golden Apple.");
 	}
 
 	@Override

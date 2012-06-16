@@ -18,13 +18,13 @@ import java.util.*;
  */
 public class Arena {
 	public enum State {
-		WAITING_FOR_PLAYERS("§1Open",
+		WAITING_FOR_PLAYERS("Open",
 				true, false, true, false),
-		COUNTING_DOWN("§1Starting Soon",
+		COUNTING_DOWN("Starting Soon",
 				true, false, true, false),
-		INITIAL_GRACE_PERIOD("§4Started|Grace",
+		INITIAL_GRACE_PERIOD("Started|Grace",
 				false, true, true, false),
-		RUNNING_GAME("§4Running",
+		RUNNING_GAME("Running",
 				false, true, false, true);
 
 		private boolean canJoin, canEditBlocks, canChangeClass, canPvP;

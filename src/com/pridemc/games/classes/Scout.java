@@ -13,6 +13,7 @@ import org.bukkit.potion.PotionType;
 public class Scout extends PlayerClass {
 	public Scout() {
 		setName("Scout");
+		setDescription("Gold Plate, Stone Sword, and a vial of speed.");
 	}
 
 	@Override

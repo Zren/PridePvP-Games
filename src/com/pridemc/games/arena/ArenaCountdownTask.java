@@ -1,5 +1,6 @@
 package com.pridemc.games.arena;
 
+import com.pridemc.games.classes.PlayerClassManager;
 import org.bukkit.ChatColor;
 
 import java.util.concurrent.TimeUnit;
@@ -21,17 +22,21 @@ public class ArenaCountdownTask implements Runnable {
 		arena.setState(Arena.State.COUNTING_DOWN);
 
 		//
+		EffectUtil.explosionOverPlayers(arena.getBukkitPlayers());
 		arena.update();
 
 		// Msg.
+		String msg;
 		long delayMillis = ArenaConfig.getCountdownDelay();
 		long minutes = TimeUnit.MILLISECONDS.toMinutes(delayMillis);
-		MessageUtil.sendMsgToServer("[Arena - %s] Game starts in %d minute(s).", arena.getName(), minutes);
+		msg = "[Arena - %s] Arena will start in " + ChatColor.AQUA + "%d" +ChatColor.YELLOW + " minute(s). Do " + ChatColor.AQUA + "/pg votestart" + ChatColor.YELLOW + " to start now.";
+		MessageUtil.sendMsgToServer(msg, arena.getName(), minutes);
 
+		// Reminder Msg - Choose a Class
 		for (ArenaPlayer arenaPlayer : arena.getArenaPlayers()) {
-			if (!arenaPlayer.hasAClass()) {
-				String msg = "Do " + ChatColor.AQUA + "/class" + ChatColor.YELLOW + " to pick your class.";
-				MessageUtil.sendMsg(arenaPlayer.getPlayer(), msg, arena.getName());
+			if (!PlayerClassManager.hasAClass(arenaPlayer.getName())) {
+				msg = "Do " + ChatColor.AQUA + "/class" + ChatColor.YELLOW + " to pick your class.";
+				MessageUtil.sendMsg(arenaPlayer.getPlayer(), msg);
 			}
 		}
 

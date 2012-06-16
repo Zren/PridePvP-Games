@@ -4,6 +4,7 @@ import ca.xshade.bukkit.util.BlockFaceUtil;
 import ca.xshade.bukkit.util.BlockRefUtil;
 import com.pridemc.games.arena.Arena;
 import com.pridemc.games.arena.ArenaPlayer;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -134,13 +135,13 @@ public class ArenaPortal {
 	public void updateSigns(Arena arena) {
 		Sign arenaPortalDescriptionSign = toSign(arenaPortalDescriptionBlock);
 		arenaPortalDescriptionSign.setLine(0, String.format("[%s]", arena.getName()));
-		arenaPortalDescriptionSign.setLine(1, String.format(""));
+		arenaPortalDescriptionSign.setLine(1, String.format(ChatColor.DARK_GRAY + "Requires"));
 		arenaPortalDescriptionSign.setLine(2, String.format("Players: %d - %d", arena.getNumPlayersRequiredToStart(), arena.getMaxNumPlayers()));
 		arenaPortalDescriptionSign.setLine(3, String.format("Votes: %d", arena.getNumVotesRequiredToStart()));
 		arenaPortalDescriptionSign.update();
 
 		Sign arenaPortalStateSign = toSign(arenaPortalStateBlock);
-		arenaPortalStateSign.setLine(0, String.format("%s", arena.getState().getShortName()));
+		arenaPortalStateSign.setLine(0, String.format("%s%s", arena.getState().canJoin() ? ChatColor.DARK_BLUE : ChatColor.DARK_RED, arena.getState().getShortName()));
 		arenaPortalStateSign.setLine(1, String.format(""));
 		arenaPortalStateSign.setLine(2, String.format("Players                "));
 		arenaPortalStateSign.setLine(3, String.format("§1%d §0/ §1%d                ", arena.getNumPlayers(), arena.getMaxNumPlayers()));

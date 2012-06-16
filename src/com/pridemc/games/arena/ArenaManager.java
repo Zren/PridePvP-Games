@@ -66,17 +66,23 @@ public class ArenaManager {
 		MessageUtil.sendMsgToAllPlayers(playersInArena, msg,
 				player.getName(), arena.getName(), arena.getArenaPlayers().size(), arena.getMaxNumPlayers());
 
-
-		msg = "Do " + ChatColor.AQUA + "/class" + ChatColor.YELLOW + " to pick your class.";
-		MessageUtil.sendMsg(player, msg, arena.getName());
-
-		if (arena.getState() == Arena.State.WAITING_FOR_PLAYERS && arena.getArenaPlayers().size() >= arena.getNumPlayersRequiredToStart()) {
+		//
+		if (arena.getNumPlayers() >= arena.getMaxNumPlayers()) {
+			// Arena is ready
+			msg = "Reached max number of players.";
+			MessageUtil.sendMsgToAllPlayers(playersInArena, msg, arena.getNumPlayersNeededToStart());
+			arena.startTaskFor(Arena.State.INITIAL_GRACE_PERIOD);
+		} else if (arena.getState() == Arena.State.WAITING_FOR_PLAYERS && arena.getNumPlayers() >= arena.getNumPlayersRequiredToStart()) {
 			// Arena is ready
 			arena.startTaskFor(Arena.State.COUNTING_DOWN);
 		} else {
 			msg = "This arena requires %d more players to begin automatically. Do " + ChatColor.AQUA + "/pg votestart" + ChatColor.YELLOW + " to start now.";
 			MessageUtil.sendMsgToAllPlayers(playersInArena, msg, arena.getNumPlayersNeededToStart());
 		}
+
+		//
+		msg = "Do " + ChatColor.AQUA + "/class" + ChatColor.YELLOW + " to pick your class.";
+		MessageUtil.sendMsg(player, msg, arena.getName());
 
 		//
 		TaskInjector.getInstance().schedule(new UpdateArenaTask(arena), 0);
@@ -95,11 +101,12 @@ public class ArenaManager {
 			ArenaManager.cleanUpPlayer(player);
 
 			List<Player> arenaPlayersAlive = ArenaUtil.asBukkitPlayerList(arena.getArenaPlayers());
+
+			List<CommandSender> msgTargets = new ArrayList<CommandSender>(arenaPlayersAlive);
+			msgTargets.add(player);
 			String msg = ChatColor.AQUA + "%s" + ChatColor.YELLOW + " has died! " + ChatColor.AQUA + "%d" + ChatColor.YELLOW + " players remaining!";
-			MessageUtil.sendMsgToAll(new ArrayList<CommandSender>(arenaPlayersAlive), msg, player.getName(), arenaPlayersAlive.size());
-			for (Player playerInArena : arenaPlayersAlive) {
-				playerInArena.getWorld().createExplosion(playerInArena.getLocation().add(0, 15, 0), 2); // Explosion above player?
-			}
+			MessageUtil.sendMsgToAll(msgTargets, msg, player.getName(), arenaPlayersAlive.size());
+			EffectUtil.explosionOverPlayers(arenaPlayersAlive);
 
 			//
 			TaskInjector.getInstance().schedule(new UpdateArenaTask(arena), 0);

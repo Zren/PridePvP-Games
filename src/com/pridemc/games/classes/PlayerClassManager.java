@@ -1,5 +1,6 @@
 package com.pridemc.games.classes;
 
+import ca.xshade.bukkit.util.ChatUtil;
 import com.pridemc.games.arena.MessageUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -74,8 +75,10 @@ public class PlayerClassManager {
 			for (PlayerClass playerClass : availableClasses) {
 				classNames.add(playerClass.getName());
 			}
-			MessageUtil.sendMsg(player, "The following classes are available for you. Type " + ChatColor.GOLD + "/class <classname>" + ChatColor.YELLOW + " to select that class");
-			MessageUtil.sendMsg(player, ChatColor.AQUA + "Classes: " + ChatColor.YELLOW + "%s", classNames);
+			MessageUtil.sendMsg(player, "The following classes are available for you.");
+			for (PlayerClass playerClass : availableClasses) {
+				MessageUtil.sendMsgNoPrefix(player, ChatUtil.formatCommand("", "/class", playerClass.getName(), playerClass.getDescription()));
+			}
 		}
 	}
 
