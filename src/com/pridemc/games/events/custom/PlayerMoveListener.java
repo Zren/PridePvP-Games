@@ -1,4 +1,4 @@
-package com.pridemc.games.events;
+package com.pridemc.games.events.custom;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;

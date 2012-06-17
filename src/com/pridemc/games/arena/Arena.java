@@ -11,7 +11,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
 import java.util.*;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -81,10 +80,11 @@ public class Arena {
 	private Set<ArenaPlayer> arenaPlayers = new HashSet<ArenaPlayer>();
 	private State state = State.WAITING_FOR_PLAYERS;
 	private Map<ArenaPlayer, Location> playerSpawnPoints = new HashMap<ArenaPlayer, Location>();
-	public long startTime = System.currentTimeMillis();
+	private long startTime = System.currentTimeMillis();
 	private TaskInjector taskInjector = TaskInjector.newInstance();
 	public Set<ArenaPlayer> playersVotingToStart = new HashSet<ArenaPlayer>();
 	public ArenaPortal portal = null;
+	public CuboidRegion region = null;
 
 	final int DEFAULT_MAX_PLAYERS = 15;
 	final int DEFAULT_PLAYERS_TO_START = 8;
@@ -101,12 +101,15 @@ public class Arena {
 		Core.arenas.set(getName() + ".max players", getMaxNumPlayers());
 		Core.arenas.set(getName() + ".playercount to start", getNumPlayersRequiredToStart());
 		Core.arenas.set(getName() + ".votes to start", getNumVotesRequiredToStart());
+
+		// Load region before spawnpoint.
+		loadRegionFromConfig();
+
 		if (!Core.arenas.isSet(getName() + ".spawnpoint"))
 			Core.arenas.createSection(getName() + ".spawnpoint");
 		if (!Core.arenas.isSet(getName() + ".world"))
 			Core.arenas.createSection(getName() + ".world");
-		Core.arenas.set(getName() + ".region.min", getRegionMinimum());
-		Core.arenas.set(getName() + ".region.max", getRegionMaximum());
+
 		try {
 			setPortalBlockLocation(getPortalBlockLocation());
 		} catch (IllegalArgumentException e) {
@@ -139,7 +142,7 @@ public class Arena {
 			logger.warning("-------------------       BUG REPORT     ------------------");
 			logger.warning("-----------------------------------------------------------");
 			logger.warning(String.format("Arena %s is trying to go back to an earlier gamestate. %s -> %s", getName(), state.name(), this.state.name()));
-			logger.log(Level.WARNING, "Stack Trace Below", Thread.currentThread().getStackTrace());
+			Thread.dumpStack();
 			logger.warning("-----------------------------------------------------------");
 		}
 
@@ -272,13 +275,8 @@ public class Arena {
 		return playersVotingToStart;
 	}
 
-	public Vector getRegionMinimum() {
-		return Core.arenas.getVector(getName() + ".region.min", new Vector());
-	}
 
-	public Vector getRegionMaximum() {
-		return Core.arenas.getVector(getName() + ".region.max", new Vector());
-	}
+
 
 	public TaskInjector getTaskInjector() {
 		return taskInjector;
@@ -371,5 +369,40 @@ public class Arena {
 
 	public void setStartTime(long startTime) {
 		this.startTime = startTime;
+	}
+
+	public void loadRegionFromConfig() {
+		Vector min = Core.arenas.getVector(getName() + ".region.min", new Vector());
+		Vector max = Core.arenas.getVector(getName() + ".region.max", new Vector());
+		String worldName = Core.arenas.getString(getName() + ".region.world");
+		World world = null;
+		if (worldName != null) {
+			world = Bukkit.getServer().getWorld(worldName);
+		}
+		if (world == null) {
+			// Backwards compatibility. Fetch old world from spawnpoint.
+			world = getWorld();
+		}
+
+		try {
+			setRegion(world, min, max);
+		} catch (IllegalArgumentException e) {
+			// Don't do anything.
+		}
+	}
+
+	public void setRegion(World world, Vector min, Vector max) {
+		setRegion(new CuboidRegion(world, min, max));
+	}
+
+	public void setRegion(CuboidRegion region) {
+		this.region = region;
+		configSet("region.world", region.getWorld().getName());
+		configSet("region.min", region.getMin());
+		configSet("region.min", region.getMin());
+	}
+
+	public CuboidRegion getRegion() {
+		return region;
 	}
 }

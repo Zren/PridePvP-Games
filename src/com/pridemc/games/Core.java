@@ -7,6 +7,7 @@ import com.pridemc.games.classes.ClassCommandHandler;
 import com.pridemc.games.commands.ArenaCommandHandler;
 import com.pridemc.games.commands.PlayerCommandHandler;
 import com.pridemc.games.events.*;
+import com.pridemc.games.events.custom.PlayerMoveListener;
 import com.pridemc.games.pluginevents.JoinArena;
 import com.pridemc.games.pluginevents.PortalCreation;
 import org.bukkit.configuration.file.YamlConfiguration;

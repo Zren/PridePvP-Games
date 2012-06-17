@@ -2,7 +2,7 @@ package com.pridemc.games.pluginevents;
 
 import com.pridemc.games.arena.Arena;
 import com.pridemc.games.arena.ArenaManager;
-import com.pridemc.games.events.PlayerMoveBlockEvent;
+import com.pridemc.games.events.custom.PlayerMoveBlockEvent;
 import org.bukkit.Material;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
@@ -34,19 +34,27 @@ public class JoinArena implements Listener{
 				}
 			}
 		}
-
-
 	}
 
 	@EventHandler
 	public void onPlayerMoveBlock(PlayerMoveBlockEvent event) {
-		Arena arena = ArenaManager.getArenaFromPortalBlock(event.getToBlock());
-		if (arena != null) {
-			try {
-				ArenaManager.addPlayerToArena(event.getPlayer(), arena);
-			} catch (Exception e) {
-				//System.out.println(e.getMessage());
-				//e.printStackTrace();
+		Player player = event.getPlayer();
+		if (ArenaManager.isInArena(player.getName())) {
+			// Limit players to within the arena.
+			Arena arena = ArenaManager.getArenaPlayerIsIn(player.getName());
+			if (!arena.getRegion().isInside(event.getToBlock().getLocation())) {
+				event.setCancelled(true);
+			}
+		} else {
+			// Detect stepping inside an arena portal.
+			Arena arena = ArenaManager.getArenaFromPortalBlock(event.getToBlock());
+			if (arena != null) {
+				try {
+					ArenaManager.addPlayerToArena(event.getPlayer(), arena);
+				} catch (Exception e) {
+					//System.out.println(e.getMessage());
+					//e.printStackTrace();
+				}
 			}
 		}
 	}

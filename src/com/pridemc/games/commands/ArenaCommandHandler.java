@@ -57,14 +57,18 @@ public class ArenaCommandHandler implements CommandExecutor {
 				} else if (args[0].equalsIgnoreCase("region")) {
 					return (new ArenaEditRegion().onCommand(sender, cmd, label, args));
 
+				} else if (args[0].equalsIgnoreCase("reset")) {
+					return ArenaReset.onCommand(sender, args);
+
 				}
 
-			} else {
-				String msg = "Type " + ChatColor.GOLD + "/arena help" + ChatColor.YELLOW + " to view the commands that deal with arenas";
-				MessageUtil.sendMsg(sender, msg);
 			}
+
+			String msg = "Type " + ChatColor.GOLD + "/arena help" + ChatColor.YELLOW + " to view the commands that deal with arenas";
+			MessageUtil.sendMsg(sender, msg);
+			return true;
 		}
 
-		return true;
+		return false;
 	}
 }
