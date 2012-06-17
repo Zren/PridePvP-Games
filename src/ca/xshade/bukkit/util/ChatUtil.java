@@ -13,11 +13,11 @@ import java.util.Collection;
 public class ChatUtil {
 	public static String formatCommand(String requirement, String command, String subCommand, String help) {
 		String out = "  ";
-		if (requirement.length() > 0)
-			out += ChatColor.RED + requirement + ": ";
 		out += ChatColor.BLUE + command;
 		if (subCommand.length() > 0)
 			out += " " + ChatColor.AQUA + subCommand;
+		if (requirement.length() > 0)
+			out += " " + ChatColor.RED + "[" + requirement + "]";
 		if (help.length() > 0)
 			out += " " + ChatColor.GRAY + ": " + help;
 		return out;
@@ -29,6 +29,11 @@ public class ChatUtil {
 			formattedItems.add(itemColour + item);
 		}
 		return StringUtil.join(formattedItems, delimeterColor + ", ");
+	}
+
+	public static String formatTitle(String title) {
+		String line = ChatColor.GOLD + "[ " + ChatColor.YELLOW + ChatColor.BOLD + "%s" + ChatColor.GOLD + " ]";
+		return String.format(line, title);
 	}
 }
 

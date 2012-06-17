@@ -37,8 +37,6 @@ public class ArenaGraceTask implements Runnable {
 			return;
 		}
 
-		arena.startTime = System.currentTimeMillis();
-
 		// Teleport Players
 		arena.setPlayerSpawnPoints();
 		arena.teleportAllToGameSpawnPoint();

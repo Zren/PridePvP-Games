@@ -31,7 +31,7 @@ public class ArenaPortal {
 
 	public ArenaPortal(Block block) {
 		if (block.getType() != Material.WALL_SIGN)
-			throw new IllegalArgumentException();
+			throw new IllegalArgumentException("Could not find a sign at marker.");
 
 		arenaPortalDescriptionBlock = block;
 		Sign sign = toSign(arenaPortalDescriptionBlock);
@@ -135,8 +135,8 @@ public class ArenaPortal {
 	public void updateSigns(Arena arena) {
 		Sign arenaPortalDescriptionSign = toSign(arenaPortalDescriptionBlock);
 		arenaPortalDescriptionSign.setLine(0, String.format("[%s]", arena.getName()));
-		arenaPortalDescriptionSign.setLine(1, String.format(ChatColor.DARK_GRAY + "Requires"));
-		arenaPortalDescriptionSign.setLine(2, String.format("Players: %d - %d", arena.getNumPlayersRequiredToStart(), arena.getMaxNumPlayers()));
+		arenaPortalDescriptionSign.setLine(1, String.format(ChatColor.DARK_RED + "Requires"));
+		arenaPortalDescriptionSign.setLine(2, String.format("Players: %d-%d", arena.getNumPlayersRequiredToStart(), arena.getMaxNumPlayers()));
 		arenaPortalDescriptionSign.setLine(3, String.format("Votes: %d", arena.getNumVotesRequiredToStart()));
 		arenaPortalDescriptionSign.update();
 

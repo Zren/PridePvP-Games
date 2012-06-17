@@ -7,7 +7,7 @@ package com.pridemc.games.arena;
 public class UpdateArenaTask implements Runnable {
 	Arena arena;
 
-	public UpdateArenaTask(Arena arena) {
+	protected UpdateArenaTask(Arena arena) {
 		this.arena = arena;
 	}
 

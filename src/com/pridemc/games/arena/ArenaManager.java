@@ -27,6 +27,7 @@ public class ArenaManager {
 	}
 
 	public static Arena getArena(String name) {
+		//return getInstance().arenaMap.get(name.toLowerCase());
 		return getInstance().arenaMap.get(name);
 	}
 
@@ -85,7 +86,7 @@ public class ArenaManager {
 		MessageUtil.sendMsg(player, msg, arena.getName());
 
 		//
-		TaskInjector.getInstance().schedule(new UpdateArenaTask(arena), 0);
+		updateArena(arena);
 	}
 
 	private static void _addPlayerToArena(Player player, Arena arena) {
@@ -109,7 +110,7 @@ public class ArenaManager {
 			EffectUtil.explosionOverPlayers(arenaPlayersAlive);
 
 			//
-			TaskInjector.getInstance().schedule(new UpdateArenaTask(arena), 0);
+			updateArena(arena);
 
 			if (ArenaManager.checkEndGameConditions(arena)) {
 				ArenaManager.endGame(arena);
@@ -192,8 +193,9 @@ public class ArenaManager {
 	}
 
 	public static void addArena(Arena arena) {
+		//getInstance().arenaMap.put(arena.getName().toLowerCase(), arena);
 		getInstance().arenaMap.put(arena.getName(), arena);
-		TaskInjector.getInstance().schedule(new UpdateArenaTask(arena), 0);
+		updateArena(arena);
 	}
 
 	public static void cleanUpPlayer(Player player) {
@@ -244,5 +246,9 @@ public class ArenaManager {
 				return arena;
 		}
 		return null;
+	}
+
+	public static void updateArena(Arena arena) {
+		TaskInjector.getInstance().schedule(new UpdateArenaTask(arena), 0);
 	}
 }

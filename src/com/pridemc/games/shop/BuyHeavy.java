@@ -18,7 +18,7 @@ public class BuyHeavy implements Listener{
 				
 				if(sign.getLine(1).equalsIgnoreCase("Class")){
 					
-					if(sign.getLine(2).equalsIgnoreCase("Heavy")){
+					if(sign.getLine(2).equalsIgnoreCase("Tank")){
 						
 						if(sign.getLine(3).equalsIgnoreCase("5")){
 							

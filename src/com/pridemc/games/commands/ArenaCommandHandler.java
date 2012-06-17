@@ -54,6 +54,9 @@ public class ArenaCommandHandler implements CommandExecutor {
 				} else if (args[0].equalsIgnoreCase("start")) {
 					return (start.onCommand(sender, cmd, label, args));
 
+				} else if (args[0].equalsIgnoreCase("region")) {
+					return (new ArenaEditRegion().onCommand(sender, cmd, label, args));
+
 				}
 
 			} else {

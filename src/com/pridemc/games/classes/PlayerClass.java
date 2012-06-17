@@ -1,20 +1,37 @@
 package com.pridemc.games.classes;
 
 import org.bukkit.entity.Player;
+import org.bukkit.permissions.Permissible;
+import org.bukkit.potion.PotionEffect;
 
 /**
  * Author: Chris H (Zren / Shade)
  * Date: 6/14/12
  */
 public abstract class PlayerClass {
+	public enum Requirement {
+		NONE("Basic Classes"),
+		VIP("VIP Donor Classes");
+
+		private String description;
+		private Requirement(String description) {
+			this.description = description;
+		}
+
+		public String getDescription() {
+			return description;
+		}
+	}
+
 	private String name;
 	private String permission = null;
 	private String description = "";
+	private Requirement requirement = Requirement.NONE;
 
-	public boolean canSelectAsClass(Player player) {
+	public boolean canSelectAsClass(Permissible permissible) {
 		if (permission == null || permission.isEmpty())
 			return true;
-		return player.hasPermission(permission);
+		return permissible.hasPermission(permission);
 	}
 
 	public String getName() {
@@ -39,7 +56,9 @@ public abstract class PlayerClass {
 		player.getInventory().setArmorContents(null);
 
 		// Reset Player Effects
-		player.getActivePotionEffects().clear();
+		for (PotionEffect potionEffect : player.getActivePotionEffects()) {
+			player.removePotionEffect(potionEffect.getType());
+		}
 	}
 
 	public abstract void equipPlayer(Player player);
@@ -50,5 +69,13 @@ public abstract class PlayerClass {
 
 	public void setDescription(String description) {
 		this.description = description;
+	}
+
+	public Requirement getRequirement() {
+		return requirement;
+	}
+
+	public void setRequirement(Requirement requirement) {
+		this.requirement = requirement;
 	}
 }

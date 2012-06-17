@@ -3,7 +3,9 @@ package com.pridemc.games.classes;
 import ca.xshade.bukkit.util.ChatUtil;
 import com.pridemc.games.arena.MessageUtil;
 import org.bukkit.ChatColor;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.permissions.Permissible;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -23,6 +25,8 @@ public class PlayerClassManager {
 		playerClasses.add(new Archer());
 		playerClasses.add(new Scout());
 		playerClasses.add(new Soldier());
+		playerClasses.add(new Tank());
+		playerClasses.add(new Grenadier());
 	}
 
 	public static PlayerClassManager getInstance() {
@@ -54,10 +58,20 @@ public class PlayerClassManager {
 		return null;
 	}
 
-	public static List<PlayerClass> getPlayerClassesAvaiableToPlayer(Player player) {
+	public static List<PlayerClass> getPlayerClassesByPermissible(Permissible permissible) {
 		List<PlayerClass> availableClasses = new ArrayList<PlayerClass>();
 		for (PlayerClass playerClass : getInstance().playerClasses) {
-			if (playerClass.canSelectAsClass(player)) {
+			if (playerClass.canSelectAsClass(permissible)) {
+				availableClasses.add(playerClass);
+			}
+		}
+		return availableClasses;
+	}
+
+	public static List<PlayerClass> getPlayerClassesByRequirement(PlayerClass.Requirement requirement) {
+		List<PlayerClass> availableClasses = new ArrayList<PlayerClass>();
+		for (PlayerClass playerClass : getInstance().playerClasses) {
+			if (playerClass.getRequirement() == requirement) {
 				availableClasses.add(playerClass);
 			}
 		}
@@ -66,19 +80,29 @@ public class PlayerClassManager {
 
 
 
-	public static void sendListOfAvailableClasses(Player player) {
-		List<PlayerClass> availableClasses = PlayerClassManager.getPlayerClassesAvaiableToPlayer(player);
+	public static void sendListOfAvailableClasses(CommandSender sender) {
+		List<PlayerClass> availableClasses = PlayerClassManager.getPlayerClassesByPermissible(sender);
 		if (availableClasses.isEmpty()) {
-			MessageUtil.sendMsg(player, ChatColor.RED + "Uh oh! You don't have any classes available! Please contact an admin!");
+			MessageUtil.sendMsg(sender, ChatColor.RED + "Uh oh! You don't have any classes available! Please contact an admin!");
 		} else {
 			List<String> classNames = new ArrayList<String>();
 			for (PlayerClass playerClass : availableClasses) {
 				classNames.add(playerClass.getName());
 			}
-			MessageUtil.sendMsg(player, "The following classes are available for you.");
-			for (PlayerClass playerClass : availableClasses) {
-				MessageUtil.sendMsgNoPrefix(player, ChatUtil.formatCommand("", "/class", playerClass.getName(), playerClass.getDescription()));
+
+			//
+			for (PlayerClass.Requirement requirement : PlayerClass.Requirement.values()) {
+				MessageUtil.sendMsgNoPrefix(sender, ChatUtil.formatTitle(requirement.getDescription()));
+				for (PlayerClass playerClass : getPlayerClassesByRequirement(requirement)) {
+					String msg = ChatUtil.formatCommand(
+							"",
+							"/class",
+							playerClass.getName(),
+							playerClass.getDescription());
+					MessageUtil.sendMsgNoPrefix(sender, msg);
+				}
 			}
+
 		}
 	}
 

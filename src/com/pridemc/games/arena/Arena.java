@@ -27,7 +27,9 @@ public class Arena {
 		INITIAL_GRACE_PERIOD("Started|Grace",
 				false, true, true, false),
 		RUNNING_GAME("Running",
-				false, true, false, true);
+				false, true, false, true),
+		EDIT("Editing",
+				false, true, false, false);
 
 		private boolean canJoin, canEditBlocks, canChangeClass, canPvP;
 		private String shortName;
@@ -88,6 +90,8 @@ public class Arena {
 	final int DEFAULT_PLAYERS_TO_START = 8;
 	final int DEFAULT_VOTES_TO_START = 2;
 
+	final String NODE_VOTES_REQUIRED = "votes to start";
+
 	public Arena(String name) {
 		this.name = name;
 
@@ -103,7 +107,11 @@ public class Arena {
 			Core.arenas.createSection(getName() + ".world");
 		Core.arenas.set(getName() + ".region.min", getRegionMinimum());
 		Core.arenas.set(getName() + ".region.max", getRegionMaximum());
-		setPortalBlockLocation(getPortalBlockLocation());
+		try {
+			setPortalBlockLocation(getPortalBlockLocation());
+		} catch (IllegalArgumentException e) {
+			// Catch silently.
+		}
 		setState(State.WAITING_FOR_PLAYERS);
 		ArenaConfig.saveArenaConfig();
 	}
@@ -294,6 +302,8 @@ public class Arena {
 			case RUNNING_GAME:
 				getTaskInjector().schedule(new ArenaStartGameTask(this), delay);
 				break;
+			case EDIT:
+				getTaskInjector().schedule(new ArenaStartEditSessionTask(this), delay);
 
 			default:
 				break;
@@ -310,11 +320,6 @@ public class Arena {
 
 		Core.arenas.set(getName() + ".portal.world", location.getWorld().getName());
 		Core.arenas.set(getName() + ".portal.vector", location.toVector());
-		/*try {
-			Core.arenas.save(new File(Core.instance.getDataFolder(), "arenas.yml"));
-		} catch (IOException e) {
-			e.printStackTrace();
-		}*/
 
 		Location portalBlockLocation = getPortalBlockLocation();
 		loadPortal(portalBlockLocation);
@@ -349,5 +354,22 @@ public class Arena {
 
 	public ArenaPortal getPortal() {
 		return portal;
+	}
+
+	public void setNumVotesRequired(int numVotesRequired) {
+		configSet(NODE_VOTES_REQUIRED, numVotesRequired);
+	}
+
+	public void configSet(String subNode, Object obj) {
+		Core.arenas.set(getName() + "." + subNode, obj);
+	}
+
+
+	public long getStartTime() {
+		return startTime;
+	}
+
+	public void setStartTime(long startTime) {
+		this.startTime = startTime;
 	}
 }

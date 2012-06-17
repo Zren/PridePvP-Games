@@ -33,21 +33,27 @@ public class Core extends JavaPlugin {
 
 	public static YamlConfiguration arenas;
 	public static YamlConfiguration config;
+	public static File arenaConfigFile;
 
 	public static Core instance;
 
-	public void onEnable() {
+	public Core() {
 		instance = this;
 		TaskInjector.newInstance(this);
+	}
+
+	public void onEnable() {
+		arenaConfigFile = new File(getDataFolder(), "arenas.yml");
 
 		// Config
 		config = (YamlConfiguration) getConfig();
-		arenas = YamlConfiguration.loadConfiguration(new File(getDataFolder(), "arenas.yml"));
+		arenas = YamlConfiguration.loadConfiguration(arenaConfigFile);
 		ArenaConfig.loadArenaConfig();
 
 		//getConfig().options().copyDefaults(true);
 
 		saveConfig();
+		saveArenaConfig();
 
 		getLogger().info("has been enabled");
 
@@ -75,11 +81,6 @@ public class Core extends JavaPlugin {
 		getServer().getPluginManager().registerEvents(new Food(), this);
 		getServer().getPluginManager().registerEvents(new PortalSignListener(), this);
 
-		try {
-			arenas.save(new File(getDataFolder(), "arenas.yml"));
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
 
 	}
 
@@ -90,15 +91,18 @@ public class Core extends JavaPlugin {
 
 		// Save
 		saveConfig();
-
-		try {
-			arenas.save(new File(getDataFolder(), "arenas.yml"));
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		saveArenaConfig();
 
 		//
 		getLogger().info("is disabled");
 
+	}
+
+	public static void saveArenaConfig() {
+		try {
+			arenas.save(arenaConfigFile);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 }

@@ -3,13 +3,15 @@ package com.pridemc.games.arena;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.plugin.Plugin;
-import uk.co.oliwali.HawkEye.*;
+import uk.co.oliwali.HawkEye.HawkEye;
+import uk.co.oliwali.HawkEye.PlayerSession;
+import uk.co.oliwali.HawkEye.Rollback;
+import uk.co.oliwali.HawkEye.SearchParser;
 import uk.co.oliwali.HawkEye.callbacks.RollbackCallback;
 import uk.co.oliwali.HawkEye.database.SearchQuery;
 import uk.co.oliwali.HawkEye.util.HawkEyeAPI;
 
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
 import java.util.Calendar;
 
 
@@ -32,11 +34,11 @@ public class RevertManager {
 		parser.minLoc = arena.getRegionMinimum();
 		parser.maxLoc = arena.getRegionMaximum();
 		parser.worlds = new String[]{arenaWorld.getName()};
-		parser.actions = Arrays.asList(new DataType[]{DataType.BLOCK_BREAK, DataType.BLOCK_PLACE});
+		//parser.actions = Arrays.asList(new DataType[]{DataType.BLOCK_BREAK, DataType.BLOCK_PLACE});
 
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		Calendar cal = Calendar.getInstance();
-		cal.setTimeInMillis(arena.startTime);
+		cal.setTimeInMillis(arena.getStartTime());
 		parser.dateFrom = sdf.format(cal.getTime());
 
 		parser.parseLocations();
