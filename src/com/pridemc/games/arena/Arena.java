@@ -20,25 +20,26 @@ import java.util.logging.Logger;
 public class Arena {
 	public enum State {
 		WAITING_FOR_PLAYERS("Open",
-				true, false, true, false),
+				true, false, true, false, false),
 		COUNTING_DOWN("Starting Soon",
-				true, false, true, false),
+				true, false, true, false, false),
 		INITIAL_GRACE_PERIOD("Started|Grace",
-				false, true, true, false),
+				false, true, true, false, true),
 		RUNNING_GAME("Running",
-				false, true, false, true),
+				false, true, false, true, false),
 		EDIT("Editing",
-				false, true, false, false);
+				false, true, false, false, false);
 
-		private boolean canJoin, canEditBlocks, canChangeClass, canPvP;
+		private boolean canJoin, canEditBlocks, canChangeClass, canPvP, canUnpackEquipment;
 		private String shortName;
 
-		private State(String shortName, boolean canJoin, boolean canEditBlocks, boolean canChangeClass, boolean canPvP) {
+		private State(String shortName, boolean canJoin, boolean canEditBlocks, boolean canChangeClass, boolean canPvP, boolean canUnpackEquipment) {
 			setShortName(shortName);
 			this.canJoin = canJoin;
 			this.canEditBlocks = canEditBlocks;
 			this.canChangeClass = canChangeClass;
 			this.canPvP = canPvP;
+			this.canUnpackEquipment = canUnpackEquipment;
 		}
 
 		public boolean canJoin() {
@@ -55,6 +56,10 @@ public class Arena {
 
 		public boolean canPvP() {
 			return canPvP;
+		}
+
+		public boolean canUnpackEquipment() {
+			return canUnpackEquipment;
 		}
 
 		public boolean canDropItems() {

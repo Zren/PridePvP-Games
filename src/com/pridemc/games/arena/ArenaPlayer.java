@@ -1,5 +1,6 @@
 package com.pridemc.games.arena;
 
+import com.pridemc.games.classes.PlayerClass;
 import com.pridemc.games.classes.PlayerClassManager;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -43,5 +44,22 @@ public class ArenaPlayer {
 
 	public boolean hasAClass() {
 		return PlayerClassManager.hasAClass(getName());
+	}
+
+	public PlayerClass getPlayerClass() {
+		return PlayerClassManager.getPlayerClass(getName());
+	}
+
+	public void equip() {
+		if (hasAClass()) {
+			Player player = getPlayer();
+
+			// Reset player's inventory and effects.
+			PlayerClass.resetPlayer(player);
+
+			// Equip the player with select equipment
+			if (getArena().getState().canUnpackEquipment())
+				getPlayerClass().equipPlayer(player);
+		}
 	}
 }

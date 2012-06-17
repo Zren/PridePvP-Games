@@ -1,5 +1,7 @@
 package com.pridemc.games.classes;
 
+import org.bukkit.Material;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.Potion;
@@ -20,11 +22,17 @@ public class Grenadier extends PlayerClass {
 	@Override
 	public void equipPlayer(Player player) {
 		// Give Equipment
+		ItemStack helmItemStack = new ItemStack(Material.IRON_HELMET, 1); // 1 Armour
+		helmItemStack.addEnchantment(Enchantment.PROTECTION_EXPLOSIONS, 1);
+		player.getInventory().addItem(helmItemStack);
+
 		Potion damageSplashPotion = new Potion(PotionType.INSTANT_DAMAGE);
 		damageSplashPotion.splash();
 		ItemStack damageSplashPotionItemStack = damageSplashPotion.toItemStack(1);
 
 		for (int i = 0; i < 4; i++)
 			player.getInventory().addItem(damageSplashPotionItemStack);
+
+
 	}
 }

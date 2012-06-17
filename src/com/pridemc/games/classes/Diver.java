@@ -23,8 +23,14 @@ public class Diver extends PlayerClass {
 	@Override
 	public void equipPlayer(Player player) {
 		EffectUtil.permanentEffect(player, PotionEffectType.WATER_BREATHING);
+
 		ItemStack swordItemStack = new ItemStack(Material.WOOD_SWORD, 1);
-		swordItemStack.addEnchantment(Enchantment.WATER_WORKER, 1);
+		player.getInventory().addItem(swordItemStack);
+
+		ItemStack helmItemStack = new ItemStack(Material.LEATHER_HELMET, 1);
+		helmItemStack.addEnchantment(Enchantment.WATER_WORKER, 1);
+		player.getInventory().addItem(helmItemStack);
+
 		for (int i = 0; i < 2; i++)
 			player.getInventory().addItem(new ItemStack(Material.COOKED_FISH, 1));
 		player.getInventory().addItem(new ItemStack(Material.MAP, 1));

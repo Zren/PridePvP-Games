@@ -34,7 +34,11 @@ public class PlayerClassManager {
 		return instance;
 	}
 
-	public static String getPlayerClass(String playerName) {
+	public static PlayerClass getPlayerClass(String playerName) {
+		return getPlayerClassByName(getPlayerClassName(playerName));
+	}
+
+	public static String getPlayerClassName(String playerName) {
 		return getInstance().playerToClassMap.get(playerName);
 	}
 
@@ -124,12 +128,6 @@ public class PlayerClassManager {
 
 		// Register the selected class so a player can't choose another.
 		PlayerClassManager.registerPlayerClass(player.getName(), playerClass.getName());
-
-		// Reset player's inventory and effects.
-		PlayerClass.resetPlayer(player);
-
-		// Equip the player with select equipment
-		playerClass.equipPlayer(player);
 
 		// Msg
 		String msg = ChatColor.YELLOW + "You have selected the " + ChatColor.AQUA + "%s" + ChatColor.YELLOW + " class!";

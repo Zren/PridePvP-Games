@@ -63,7 +63,13 @@ public class ArenaGraceTask implements Runnable {
 
 		//
 		int durationTicks = (int)(delayMillis / 1000 * 20);
-		for (Player player : arena.getBukkitPlayers()) {
+		for (ArenaPlayer arenaPlayer : arena.getArenaPlayers()) {
+			Player player = arenaPlayer.getPlayer();
+
+			// Equip player (Unpack bag).
+			arenaPlayer.equip();
+
+			// Temp speed boost
 			EffectUtil.temporarySpeed(player, durationTicks);
 		}
 

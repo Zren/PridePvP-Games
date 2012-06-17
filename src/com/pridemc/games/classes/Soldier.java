@@ -23,10 +23,13 @@ public class Soldier extends PlayerClass {
 		player.getInventory().setLeggings(new ItemStack(Material.LEATHER_LEGGINGS, 1)); // 1 Armour
 
 		if (Chance.oneIn(4)) {
-			player.getInventory().addItem(new ItemStack(Material.STONE_SWORD, 1));
-		} else {
+			// Bad Luck
+			player.getInventory().addItem(new ItemStack(Material.WOOD_SWORD, 1));
 			player.getInventory().addItem(new ItemStack(Material.STICK, 1));
 			player.getInventory().addItem(new ItemStack(Material.COBBLESTONE, 2));
+			player.getInventory().addItem(new ItemStack(Material.WORKBENCH, 1));
+		} else {
+			player.getInventory().addItem(new ItemStack(Material.STONE_SWORD, 1));
 		}
 
 		if (Chance.oneIn(4))
