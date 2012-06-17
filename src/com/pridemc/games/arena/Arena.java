@@ -20,9 +20,9 @@ import java.util.logging.Logger;
 public class Arena {
 	public enum State {
 		WAITING_FOR_PLAYERS("Open",
-				true, false, true, false, false),
+				true, false, true, false, true),
 		COUNTING_DOWN("Starting Soon",
-				true, false, true, false, false),
+				true, false, true, false, true),
 		INITIAL_GRACE_PERIOD("Started|Grace",
 				false, true, true, false, true),
 		RUNNING_GAME("Running",

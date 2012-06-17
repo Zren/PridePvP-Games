@@ -29,7 +29,7 @@ public class Diver extends PlayerClass {
 
 		ItemStack helmItemStack = new ItemStack(Material.LEATHER_HELMET, 1);
 		helmItemStack.addEnchantment(Enchantment.WATER_WORKER, 1);
-		player.getInventory().addItem(helmItemStack);
+		player.getInventory().setHelmet(helmItemStack);
 
 		for (int i = 0; i < 2; i++)
 			player.getInventory().addItem(new ItemStack(Material.COOKED_FISH, 1));

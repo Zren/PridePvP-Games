@@ -11,6 +11,7 @@ import org.bukkit.entity.Player;
  */
 public class ArenaPlayer {
 
+	boolean hasBeenEquiped = false;
 	String name;
 
 	public ArenaPlayer(Player player) {
@@ -51,15 +52,20 @@ public class ArenaPlayer {
 	}
 
 	public void equip() {
-		if (hasAClass()) {
-			Player player = getPlayer();
+		if (!hasAClass())
+			return;
+		if (hasBeenEquiped)
+			return;
 
-			// Reset player's inventory and effects.
-			PlayerClass.resetPlayer(player);
+		Player player = getPlayer();
 
-			// Equip the player with select equipment
-			if (getArena().getState().canUnpackEquipment())
-				getPlayerClass().equipPlayer(player);
-		}
+		// Reset player's inventory and effects.
+		PlayerClass.resetPlayer(player);
+
+		// Equip the player with select equipment
+		if (getArena().getState().canUnpackEquipment())
+			getPlayerClass().equipPlayer(player);
+
+		hasBeenEquiped = true;
 	}
 }

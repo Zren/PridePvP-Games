@@ -1,10 +1,12 @@
 package com.pridemc.games.classes;
 
+import com.pridemc.games.arena.EffectUtil;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.Potion;
+import org.bukkit.potion.PotionEffectType;
 import org.bukkit.potion.PotionType;
 
 /**
@@ -29,5 +31,7 @@ public class Scout extends PlayerClass {
 		player.getInventory().setBoots(bootsItemStack);
 
 		player.getInventory().addItem(new Potion(PotionType.SPEED).toItemStack(1));
+
+		EffectUtil.permanentEffect(player, PotionEffectType.FAST_DIGGING);
 	}
 }

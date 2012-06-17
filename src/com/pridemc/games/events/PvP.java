@@ -62,7 +62,7 @@ public class PvP implements Listener {
 
 		if (attackerClass instanceof Diver) {
 			if (attacker.getItemInHand().getType() == Material.WOOD_SWORD) {
-				int durationTicks = MinecraftUtil.secondsToTicks(20);
+				int durationTicks = MinecraftUtil.secondsToTicks(5);
 				defender.addPotionEffect(PotionEffectType.POISON.createEffect(durationTicks, 1));
 			}
 		}
