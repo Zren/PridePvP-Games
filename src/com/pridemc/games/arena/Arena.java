@@ -18,6 +18,7 @@ import java.util.logging.Logger;
  * Date: 6/2/12
  */
 public class Arena {
+
 	public enum State {
 		WAITING_FOR_PLAYERS("Open",
 				true, false, true, false, true),
@@ -410,4 +411,22 @@ public class Arena {
 	public CuboidRegion getRegion() {
 		return region;
 	}
+
+	public boolean hasRegion() {
+		return region != null;
+	}
+
+
+	public boolean hasSpawnPoint() {
+		return getSpawnPoint() != null;
+	}
+
+
+	public boolean isSetup() {
+		return hasRegion()
+			&& hasPortal()
+			&& getGameSpawnVectors().size() > 0
+			&& hasSpawnPoint();
+	}
+
 }

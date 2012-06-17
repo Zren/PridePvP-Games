@@ -5,6 +5,7 @@ import ca.xshade.bukkit.util.BlockRefUtil;
 import com.pridemc.games.arena.Arena;
 import com.pridemc.games.arena.ArenaPlayer;
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -194,5 +195,9 @@ public class ArenaPortal {
 
 	public boolean isTeleBlock(Block block) {
 		return teleBlocks.contains(block);
+	}
+
+	public Location getKeyLocation() {
+		return arenaPortalDescriptionBlock.getLocation();
 	}
 }

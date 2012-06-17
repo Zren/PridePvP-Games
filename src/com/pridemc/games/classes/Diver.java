@@ -1,6 +1,5 @@
 package com.pridemc.games.classes;
 
-import ca.xshade.util.Chance;
 import com.pridemc.games.arena.EffectUtil;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
@@ -34,9 +33,6 @@ public class Diver extends PlayerClass {
 		for (int i = 0; i < 2; i++)
 			player.getInventory().addItem(new ItemStack(Material.COOKED_FISH, 1));
 		player.getInventory().addItem(new ItemStack(Material.MAP, 1));
-
-		if (Chance.oneIn(4))
-			player.getInventory().addItem(new ItemStack(Material.DIAMOND, 1));
 
 	}
 }

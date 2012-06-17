@@ -35,5 +35,10 @@ public class ChatUtil {
 		String line = ChatColor.GOLD + "[ " + ChatColor.YELLOW + ChatColor.BOLD + "%s" + ChatColor.GOLD + " ]";
 		return String.format(line, title);
 	}
+
+	public static String keyValue(String key, String value, Object ... args) {
+		String line = ChatColor.AQUA + key + ": " + ChatColor.YELLOW + value;
+		return String.format(line, args);
+	}
 }
 

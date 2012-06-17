@@ -25,6 +25,21 @@ public class DevArenaStates {
 					arena.getNumVotesRequiredToStart());
 		}
 
+		MessageUtil.sendMsg(sender, "Arenas:");
+
+		for(String arenaName : ArenaConfig.getArenaNames()){
+			Arena arena = ArenaManager.getArena(arenaName);
+			String msg = "    " +ChatColor.AQUA + "%s" + ChatColor.YELLOW + ": %s" + ChatColor.YELLOW + ", Players[" + ChatColor.GOLD + "%d" + ChatColor.YELLOW + "/" + ChatColor.GOLD + "%d" + ChatColor.YELLOW + "], Votes[" + ChatColor.GOLD + "%d" + ChatColor.YELLOW + "/" + ChatColor.GOLD + "%d" + ChatColor.YELLOW + "], %sSetup";
+			MessageUtil.sendMsgNoPrefix(sender, msg,
+					arena.getName(),
+					(arena.getState().canJoin() ?  ChatColor.GREEN : ChatColor.RED) + arena.getState().getShortName(),
+					arena.getNumPlayers(),
+					arena.getMaxNumPlayers(),
+					arena.getNumVotesToStart(),
+					arena.getNumVotesRequiredToStart(),
+					arena.isSetup() ? ChatColor.GREEN : ChatColor.RED);
+		}
+
 		return true;
 	}
 }
