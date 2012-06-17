@@ -62,6 +62,12 @@ public class ArenaGraceTask implements Runnable {
 		}
 
 		//
+		int durationTicks = (int)(delayMillis / 1000 * 20);
+		for (Player player : arena.getBukkitPlayers()) {
+			EffectUtil.temporarySpeed(player, durationTicks);
+		}
+
+		//
 		arena.scheduleTaskFor(Arena.State.RUNNING_GAME, delayMillis);
 	}
 }
