@@ -27,6 +27,7 @@ public class PlayerClassManager {
 		playerClasses.add(new Soldier());
 		playerClasses.add(new Tank());
 		playerClasses.add(new Grenadier());
+		playerClasses.add(new Diver());
 	}
 
 	public static PlayerClassManager getInstance() {

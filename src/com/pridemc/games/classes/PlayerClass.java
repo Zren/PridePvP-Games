@@ -9,6 +9,8 @@ import org.bukkit.potion.PotionEffect;
  * Date: 6/14/12
  */
 public abstract class PlayerClass {
+	private static final String VIP_CLASS_NODE_PREFIX = "pg.class.";
+
 	public enum Requirement {
 		NONE("Basic Classes"),
 		VIP("VIP Donor Classes");
@@ -48,6 +50,10 @@ public abstract class PlayerClass {
 
 	public void setPermission(String permission) {
 		this.permission = permission;
+	}
+
+	public void calculatePermission() {
+		setPermission(VIP_CLASS_NODE_PREFIX + getName().toLowerCase());
 	}
 
 	public static void resetPlayer(Player player) {

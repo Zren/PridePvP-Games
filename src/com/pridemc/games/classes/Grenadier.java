@@ -13,7 +13,7 @@ public class Grenadier extends PlayerClass {
 	public Grenadier() {
 		setName("Grenadier");
 		setDescription("Equiped with 4 Tier I Splash Potions.");
-		setPermission("pg.class.grenadier");
+		calculatePermission();
 		setRequirement(Requirement.VIP);
 	}
 
