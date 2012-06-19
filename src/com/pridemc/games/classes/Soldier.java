@@ -1,6 +1,8 @@
 package com.pridemc.games.classes;
 
 import ca.xshade.util.Chance;
+import com.pridemc.games.arena.MessageUtil;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -24,6 +26,7 @@ public class Soldier extends PlayerClass {
 
 		if (Chance.oneIn(4)) {
 			// Bad Luck
+			MessageUtil.sendMsg(player, ChatColor.RED + "Bad Luck! Got a broken sword instead. Quickly! Make a new one.");
 			player.getInventory().addItem(new ItemStack(Material.WOOD_SWORD, 1));
 			player.getInventory().addItem(new ItemStack(Material.STICK, 1));
 			player.getInventory().addItem(new ItemStack(Material.COBBLESTONE, 2));

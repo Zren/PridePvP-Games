@@ -1,12 +1,9 @@
 package com.pridemc.games.arena;
 
-import ca.xshade.bukkit.util.ConfigUtil;
 import ca.xshade.bukkit.util.TaskInjector;
-import com.pridemc.games.Core;
 import com.pridemc.games.classes.PlayerClass;
 import com.pridemc.games.classes.PlayerClassManager;
 import org.bukkit.ChatColor;
-import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -18,9 +15,13 @@ import java.util.*;
  * Date: 6/2/12
  */
 public class ArenaManager {
-	private static ArenaManager instance = new ArenaManager();
+	private static ArenaManager instance;
 	private Map<String, Arena> arenaMap = new HashMap<String, Arena>();
 	private Map<String, String> playerToArenaMap = new HashMap<String, String>();
+
+	public static void setInstance(ArenaManager instance) {
+		ArenaManager.instance = instance;
+	}
 
 	public static ArenaManager getInstance() {
 		return instance;
@@ -58,7 +59,8 @@ public class ArenaManager {
 		PlayerClass.resetPlayer(player);
 
 		// Teleport player
-		player.teleport(arena.getSpawnPoint());
+		if (arena.hasSpawnPoint())
+			player.teleport(arena.getSpawnPoint());
 
 
 		// Reaction
@@ -99,7 +101,7 @@ public class ArenaManager {
 		Arena arena = ArenaManager.getArenaPlayerIsIn(player.getName());
 		//if (arena != null && !arena.getState().canJoin()) { // If in a game state where the players can't join, then remove the player
 		if (arena != null) {
-			ArenaManager._removePlayerFromArena(player.getName());
+			ArenaManager._cleanUpPlayer(player);
 
 			List<Player> arenaPlayersAlive = ArenaUtil.asBukkitPlayerList(arena.getArenaPlayers());
 
@@ -155,11 +157,6 @@ public class ArenaManager {
 		return getArena(arenaName);
 	}
 
-	//TODO: Move somewhere more specific.
-	public static Location getGlobalSpawnPoint() {
-		return ConfigUtil.getLocationFromVector(Core.config, "Spawn location", "Spawn world");
-	}
-
 	public static boolean checkEndGameConditions(Arena arena) {
 		if (!arena.getState().canJoin()) {
 			Set<ArenaPlayer> alivePlayers = arena.getArenaPlayers();
@@ -199,7 +196,7 @@ public class ArenaManager {
 	}
 
 	public static void cleanUpPlayer(Player player) {
-		player.teleport(getGlobalSpawnPoint());
+		player.teleport(ArenaCore.getInstance().getGlobalSpawnPoint());
 		_cleanUpPlayer(player);
 	}
 
@@ -208,9 +205,10 @@ public class ArenaManager {
 		PlayerClass.resetPlayer(player);
 	}
 
-	public static void resetArena(String arenaName) {
+	public static Arena resetArena(String arenaName) {
 		cleanupArena(getArena(arenaName));
 		addArena(new Arena(arenaName));
+		return getArena(arenaName);
 	}
 
 	public static boolean isInArena(String playerName) {
@@ -223,8 +221,8 @@ public class ArenaManager {
 		}
 
 		arena.getTaskInjector().cancelAll();
-
 		RevertManager.revertArena(arena);
+
 	}
 
 	public static void cleanupAllArenas() {
@@ -250,5 +248,16 @@ public class ArenaManager {
 
 	public static void updateArena(Arena arena) {
 		TaskInjector.getInstance().schedule(new UpdateArenaTask(arena), 0);
+	}
+
+	public static void removeArena(Arena arena) {
+		//TODO teardown portal signs etc.
+		getInstance().arenaMap.remove(arena.getName());
+	}
+
+	public static void deleteArena(Arena arena) {
+
+		removeArena(arena);
+		ArenaCore.getInstance().getArenaConfig().set(arena.getName(), null);
 	}
 }

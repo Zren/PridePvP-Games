@@ -12,7 +12,7 @@ import java.util.List;
 public class PlayerDeath implements Listener{
 	
 	private List<Player> playerlist = new ArrayList<Player>();
-	
+
 	@EventHandler
 	public void onPlayerDeath(PlayerDeathEvent event) {
 

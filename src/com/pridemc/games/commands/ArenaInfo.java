@@ -79,8 +79,10 @@ public class ArenaInfo {
 		MessageUtil.sendMsgNoPrefix(sender, ChatUtil.keyValue("Spawn Point", msg));
 
 		// Game Spawn Points
-		if (arena.getGameSpawnVectors().size() > 0) {
-			msg = ChatUtil.list(CollectionUtil.toStringList(arena.getGameSpawnVectors()), ChatColor.WHITE, ChatColor.GRAY);
+		int numGameSpawnPoints = arena.getGameSpawnPointVectors().size();
+		if (numGameSpawnPoints > 0) {
+			msg = String.format("(Total: %d) ", numGameSpawnPoints);
+			msg += ChatUtil.list(CollectionUtil.toStringList(arena.getGameSpawnPointVectors()), ChatColor.WHITE, ChatColor.GRAY);
 		} else {
 			msg = ChatColor.RED + "None set.";
 		}

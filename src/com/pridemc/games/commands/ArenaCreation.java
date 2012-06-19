@@ -1,59 +1,43 @@
 package com.pridemc.games.commands;
 
-import com.pridemc.games.Core;
-import com.pridemc.games.arena.Arena;
-import com.pridemc.games.arena.ArenaConfig;
-import com.pridemc.games.arena.ArenaManager;
+import com.pridemc.games.arena.*;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import java.io.File;
-import java.io.IOException;
+public class ArenaCreation implements CommandExecutor {
 
-public class ArenaCreation implements CommandExecutor{
-	
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-		
-		if(sender instanceof Player){
-			
+
+		if (sender instanceof Player) {
+
 			Player player = (Player) sender;
-		
-		if(args.length < 2){
-			
-			player.sendMessage(ChatColor.RED + "Incorrect syntax. Correct usage: /arena create <name>");
-			
-		}else if(args.length == 2){
-			
-			String aname = args[1];
-			
-			if (!ArenaConfig.getArenaNames().contains(aname)) {
 
-				ArenaManager.addArena(new Arena(aname));
-			
-				Core.instance.getEditing().put(player, aname);
+			if (args.length < 2) {
+				player.sendMessage(ChatColor.RED + "Incorrect syntax. Correct usage: /arena create <name>");
+				String msg = ChatColor.RED + "Incorrect syntax. Correct usage: /arena create <name>";
+				MessageUtil.sendMsg(sender, msg);
+			} else if (args.length == 2) {
 
-				player.sendMessage(ChatColor.GOLD + "[" + ChatColor.AQUA + "Pride Games" + ChatColor.GOLD + "] " +
-				ChatColor.YELLOW +	"New arena " + aname + " succesfully created! You are now editing this arena as well. To stop editting, type" + ChatColor.GOLD + " /arena edit");
+				String arenaName = args[1];
 
-			} else {
-				
-				sender.sendMessage(ChatColor.RED + "There is already an arena called " + aname + ". If you'd like to remove this arena type /arena remove " + aname + ".");
-				
-			}
-		}
-		
-		try {
+				Arena arena = ArenaManager.getArena(arenaName);
 
-			Core.arenas.save(new File(Core.instance.getDataFolder(), "arenas.yml"));
+				if (arena == null) {
+					// Arena doesn't exist already
+					arena = new Arena(arenaName);
+					ArenaManager.addArena(arena);
+					ArenaEditManager.startEditSession(player, arena);
 
-		} catch (IOException e) {
-
-			e.printStackTrace();
-			
+					String msg = "New arena %s succesfully created! You are now editing this arena as well. To stop editting, type" + ChatColor.GOLD + " /arena edit";
+					MessageUtil.sendMsg(sender, msg, arena.getName());
+				} else {
+					String msg = ChatColor.RED + "There is already an arena called %1$s. If you'd like to remove this arena type /arena remove %1$s.";
+					MessageUtil.sendMsg(sender, msg, arenaName);
+				}
 			}
 		}
 		return true;

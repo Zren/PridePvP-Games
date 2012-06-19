@@ -8,7 +8,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockPlaceEvent;
 
 public class BlockPlace implements Listener {
-	
 	@EventHandler
 	public void onBlockPlace(BlockPlaceEvent event){
 		Player player = event.getPlayer();
@@ -22,7 +21,5 @@ public class BlockPlace implements Listener {
 				event.setCancelled(true);
 			}
 		}
-
-
 	}
 }

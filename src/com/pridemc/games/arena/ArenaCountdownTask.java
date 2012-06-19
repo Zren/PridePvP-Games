@@ -27,7 +27,7 @@ public class ArenaCountdownTask implements Runnable {
 
 		// Msg.
 		String msg;
-		long delayMillis = ArenaConfig.getCountdownDelay();
+		long delayMillis = ArenaCore.getInstance().getArenaCountdownDuration();
 		long minutes = TimeUnit.MILLISECONDS.toMinutes(delayMillis);
 		msg = "[Arena - %s] Arena will start in " + ChatColor.AQUA + "%d" +ChatColor.YELLOW + " minute(s). Do " + ChatColor.AQUA + "/pg votestart" + ChatColor.YELLOW + " to start now.";
 		MessageUtil.sendMsgToServer(msg, arena.getName(), minutes);

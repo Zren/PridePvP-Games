@@ -1,28 +1,21 @@
 package com.pridemc.games.commands;
 
-import com.pridemc.games.Core;
-import com.pridemc.games.arena.Arena;
-import com.pridemc.games.arena.ArenaManager;
-import com.pridemc.games.arena.MessageUtil;
-import com.pridemc.games.arena.WorldEditUtil;
+import ca.xshade.bukkit.util.config.WorldVector;
+import com.pridemc.games.arena.*;
 import com.sk89q.worldedit.IncompleteRegionException;
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-import java.util.ArrayList;
-
 public class ArenaConfigOptions implements CommandExecutor {
 
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
 
 		if (sender instanceof Player) {
-
-
-
 			if (args.length < 2) {
 				String msg = ChatColor.RED + "You have to specifiy something to set!" +
 						"Spawnpoint [" + ChatColor.YELLOW + "sp" + ChatColor.RED + "], " +
@@ -35,142 +28,93 @@ public class ArenaConfigOptions implements CommandExecutor {
 
 			} else {
 				Player player = (Player) sender;
-				if (!Core.instance.getEditing().containsKey(player)) {
+				if (!ArenaEditManager.isEdidting(player)) {
 					String msg = ChatColor.RED + "You are not editing an arena!" +
 							" Type " + ChatColor.YELLOW + "/arena edit <name> " + ChatColor.RED + "to begin editing an arena";
 					MessageUtil.sendMsg(sender, msg);
 					return true;
 				}
 
-				String arenaName = Core.instance.getEditing().get(player);
-				Arena arena = ArenaManager.getArena(arenaName);
+				Arena arena = ArenaEditManager.getArenaPlayerIsEditing(player);
 
 				if (arena == null) {
 					String msg = ChatColor.RED + "The arena you were editing (%s) no longer exists.";
-					MessageUtil.sendMsg(sender, msg, arenaName);
+					MessageUtil.sendMsg(sender, msg, ArenaEditManager.getArenaNamePlayerIsEditing(player));
+
+					ArenaEditManager.finishEditSession(player);
 					return true;
 				}
 
-				//Setting spawn points
+				String msgArenaChange = "Set " + ChatColor.AQUA + "%s" + ChatColor.YELLOW + " for " + ChatColor.AQUA + "%s" + ChatColor.YELLOW + " to " + ChatColor.AQUA + "%s";
+
 				if (args[1].equalsIgnoreCase("sp")) {
+					//Setting spawn points
+					arena.setSpawnPoint(player.getLocation());
+					String msg = "Spawn point for %s set at your location.";
+					MessageUtil.sendMsg(sender, msg, arena.getName());
 
-					Core.arenas.set(arenaName + ".spawnpoint", player.getLocation().toVector());
-
-					Core.arenas.set(arenaName + ".world", player.getWorld().getName());
-
-					sender.sendMessage(ChatColor.GOLD + "[" + ChatColor.AQUA + "Pride Games" + ChatColor.GOLD + "] " +
-
-							ChatColor.YELLOW + "Spawn point for " + arenaName + " set at your location");
-
-					//Setting game points
 				} else if (args[1].equalsIgnoreCase("gp")) {
+					//Setting game points
 
-					Integer x = player.getLocation().toVector().getBlockX();
+					Location location = player.getLocation();
+					WorldVector worldVector = new WorldVector(location).floorVector();
+					arena.addGameSpawnPointVectors(worldVector);
 
-					Integer y = player.getLocation().toVector().getBlockY();
+					String msg = "Game spawn point for %s set at your location (%s). Total: %d";
+					MessageUtil.sendMsg(sender, msg, arena.getName(), worldVector.toString(), arena.getGameSpawnPointVectors().size());
 
-					Integer z = player.getLocation().toVector().getBlockZ();
 
-					if (Core.arenas.getList(arenaName + ".gamepoints") == null) {
-
-						ArrayList<Vector> gamepoints = new ArrayList<Vector>();
-
-						gamepoints.add(new Vector(x, y, z));
-
-						Core.arenas.set(arenaName + ".gamepoints", gamepoints);
-
-					} else {
-
-						@SuppressWarnings("unchecked")
-						ArrayList<Vector> gamepoints = (ArrayList<Vector>) Core.arenas.getList(arenaName + ".gamepoints");
-
-						gamepoints.add(new Vector(x, y, z));
-
-						Core.arenas.set(arenaName + ".gamepoints", gamepoints);
-
-					}
-
-					sender.sendMessage(ChatColor.GOLD + "[" + ChatColor.AQUA + "Pride Games" + ChatColor.GOLD + "] " +
-
-							ChatColor.YELLOW + "Game point for " + arenaName + " set at your location");
-
-					//Setting the max players
 				} else if (args[1].equalsIgnoreCase("mp")) {
-
+					//Setting the max players
 					if (args.length < 3) {
-
-						sender.sendMessage(ChatColor.RED + "Missing arguments. Correct usage: /arena set mp #");
-
+						String msg = ChatColor.RED + "Missing arguments. Correct usage: /arena set mp #";
+						MessageUtil.sendMsg(sender, msg);
 					} else {
-
 						try {
 							Integer number = Integer.valueOf(args[2]);
-
-							Core.arenas.set(arenaName + ".max players", number);
-
-							sender.sendMessage(ChatColor.GOLD + "[" + ChatColor.AQUA + "Pride Games" + ChatColor.GOLD + "] " +
-
-									ChatColor.YELLOW + "Max player amount for " + arenaName + " set to " + number);
-
+							arena.setMaxNumPlayers(number);
+							MessageUtil.sendMsg(sender, msgArenaChange, "Max Player Amound", arena.getName(), number);
 						} catch (NumberFormatException ex) {
-
-							sender.sendMessage(ChatColor.RED + "The last argument must be a number!");
-
+							MessageUtil.sendMsg(sender, ChatColor.RED + "The last argument must be a number!");
 						}
 					}
 				} else if (args[1].equalsIgnoreCase("v")) {
+					//Setting the votes to start
 					if (args.length < 3) {
-						sender.sendMessage(ChatColor.RED + "Missing arguments. Correct usage: /arena set sv #");
+						sender.sendMessage(ChatColor.RED + "Missing arguments. Correct usage: /arena set v #");
 					} else {
 						try {
 							int number = Integer.valueOf(args[2]);
-							arena.setNumVotesRequired(number);
-							String msg = "Set " + ChatColor.AQUA + "%s" + ChatColor.YELLOW + " for " + ChatColor.AQUA + "%s" + ChatColor.YELLOW + " to " + ChatColor.AQUA + "%s";
-							MessageUtil.sendMsg(sender, msg, "votes required", arena.getName(), number);
+							arena.setNumVotesRequiredToStart(number);
+							MessageUtil.sendMsg(sender, msgArenaChange, "votes required", arena.getName(), number);
 						} catch (NumberFormatException ex) {
 							MessageUtil.sendMsg(sender, ChatColor.RED + "The last argument must be a number!");
-							sender.sendMessage(ChatColor.RED + "The last argument must be a number!");
 						}
 					}
-
-
-					//Setting the players to start
 				} else if (args[1].equalsIgnoreCase("pbs")) {
-
+					//Setting the players to start
 					if (args.length < 3) {
-
-						sender.sendMessage(ChatColor.RED + "Missing arguments. Correct usage: /arena set mp #");
-
+						sender.sendMessage(ChatColor.RED + "Missing arguments. Correct usage: /arena set pbs #");
 					} else {
-
 						try {
 							Integer number = Integer.valueOf(args[2]);
-
-							Core.arenas.set(arenaName + ".playercount to start", number);
-
-							sender.sendMessage(ChatColor.GOLD + "[" + ChatColor.AQUA + "Pride Games" + ChatColor.GOLD + "] " +
-									ChatColor.YELLOW + "Playercount to start for " + arenaName + " set to " + Integer.valueOf(number));
-
+							arena.setNumPlayersRequiredToStart(number);
+							MessageUtil.sendMsg(sender, msgArenaChange, "Players Required to Start", arena.getName(), number);
 						} catch (NumberFormatException ex) {
-
-							sender.sendMessage(ChatColor.RED + "The last argument must be a number!");
-
+							MessageUtil.sendMsg(sender, ChatColor.RED + "The last argument must be a number!");
 						}
 					}
 				} else if (args[1].equalsIgnoreCase("region")) {
 					try {
 						Vector minVector = WorldEditUtil.getSelectionMinimum(player);
 						Vector maxVector = WorldEditUtil.getSelectionMaximum(player);
-						Core.arenas.set(arenaName + ".region.min", minVector);
-						Core.arenas.set(arenaName + ".region.max", maxVector);
-						String msg = ChatColor.YELLOW + "Set region for %s as (%s) -> (%s).";
-						MessageUtil.sendMsg(sender, msg, arenaName, minVector, maxVector);
+						arena.setRegion(new CuboidRegion(player.getWorld(), minVector, maxVector));
+						MessageUtil.sendMsg(sender, msgArenaChange, "Region", arena.getName(), String.format("(%s) -> (%s)", maxVector, maxVector));
 					} catch (IncompleteRegionException e) {
 						MessageUtil.sendMsg(sender, ChatColor.RED + "You have not selected a region (WorldEdit).");
 					}
 				}
 
-				Core.saveArenaConfig();
 				ArenaManager.updateArena(arena);
 			}
 		}

@@ -23,13 +23,15 @@ public class Scout extends PlayerClass {
 	@Override
 	public void equipPlayer(Player player) {
 		// Give Equipment
-		//player.getInventory().setChestplate(new ItemStack(Material.GOLD_CHESTPLATE, 1));
+		player.getInventory().setChestplate(new ItemStack(Material.LEATHER_CHESTPLATE, 1));
+
 
 		ItemStack bootsItemStack = new ItemStack(Material.LEATHER_BOOTS, 1);
 		bootsItemStack.addEnchantment(Enchantment.PROTECTION_PROJECTILE, 4);
 		bootsItemStack.addEnchantment(Enchantment.PROTECTION_FALL, 4);
 		player.getInventory().setBoots(bootsItemStack);
 
+		player.getInventory().addItem(new ItemStack(Material.WOOD_SWORD, 1));
 		player.getInventory().addItem(new Potion(PotionType.SPEED).toItemStack(1));
 
 		EffectUtil.permanentEffect(player, PotionEffectType.FAST_DIGGING);

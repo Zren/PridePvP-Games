@@ -63,6 +63,9 @@ public class ArenaCommandHandler implements CommandExecutor {
 				} else if (args[0].equalsIgnoreCase("info")) {
 					return ArenaInfo.onCommand(sender, args);
 
+				} else if (args[0].equalsIgnoreCase("toggle")) {
+					return ArenaToggle.onCommand(sender, args);
+
 				}
 
 			}

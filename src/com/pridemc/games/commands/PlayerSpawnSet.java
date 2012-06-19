@@ -1,6 +1,6 @@
 package com.pridemc.games.commands;
 
-import com.pridemc.games.Core;
+import com.pridemc.games.arena.ArenaCore;
 import com.pridemc.games.arena.MessageUtil;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -12,11 +12,8 @@ public class PlayerSpawnSet {
 		if (sender.hasPermission("pridegames.admin")) {
 			Player player = (Player) sender;
 
-			Core.config.set("Spawn location", player.getLocation().toVector());
-			Core.config.set("Spawn world", player.getWorld().getName());
-			Core.instance.saveConfig();
-
-			MessageUtil.sendMsg(sender, "The PrideGames spawn has been set to your location");
+			ArenaCore.getInstance().setGlobalSpawnPoint(player.getLocation());
+			MessageUtil.sendMsg(sender, "The PrideGames spawn has been set to your location.");
 		}
 		return true;
 	}

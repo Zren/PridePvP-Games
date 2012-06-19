@@ -1,6 +1,6 @@
 package com.pridemc.games.commands;
 
-import com.pridemc.games.Core;
+import com.pridemc.games.arena.ArenaCore;
 import com.pridemc.games.arena.MessageUtil;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -12,10 +12,8 @@ public class PlayerShopSet {
 		if (sender.hasPermission("pridegames.admin")) {
 			Player player = (Player) sender;
 
-			Core.config.set("Shop location", player.getLocation().toVector());
-			Core.instance.saveConfig();
-
-			MessageUtil.sendMsg(sender, "The PrideGames shop has been set to your location");
+			ArenaCore.getInstance().setShopLocation(player.getLocation());
+			MessageUtil.sendMsg(sender, "The PrideGames shop has been set to your location.");
 		}
 		
 		return true;

@@ -1,8 +1,8 @@
 package com.pridemc.games.arena;
 
-import ca.xshade.bukkit.util.ConfigUtil;
 import ca.xshade.bukkit.util.TaskInjector;
-import com.pridemc.games.Core;
+import ca.xshade.bukkit.util.config.Config;
+import ca.xshade.bukkit.util.config.WorldVector;
 import com.pridemc.games.portal.ArenaPortal;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -19,7 +19,10 @@ import java.util.logging.Logger;
  */
 public class Arena {
 
+
+	//TODO Loading gamestate?
 	public enum State {
+		// Normal GameStates
 		WAITING_FOR_PLAYERS("Open",
 				true, false, true, false, true),
 		COUNTING_DOWN("Starting Soon",
@@ -28,8 +31,11 @@ public class Arena {
 				false, true, true, false, true),
 		RUNNING_GAME("Running",
 				false, true, false, true, false),
+		// Special GameStates
 		EDIT("Editing",
-				false, true, false, false, false);
+				false, true, false, false, false),
+		CLOSED("Closed",
+				false, false, false, false, false);
 
 		private boolean canJoin, canEditBlocks, canChangeClass, canPvP, canUnpackEquipment;
 		private String shortName;
@@ -81,49 +87,105 @@ public class Arena {
 		}
 	}
 
-	private String name;
+
+	// Not Persistent
 	private Map<String, ArenaPlayer> arenaPlayerMap = new HashMap<String, ArenaPlayer>();
 	private Set<ArenaPlayer> arenaPlayers = new HashSet<ArenaPlayer>();
-	private State state = State.WAITING_FOR_PLAYERS;
 	private Map<ArenaPlayer, Location> playerSpawnPoints = new HashMap<ArenaPlayer, Location>();
 	private long startTime = System.currentTimeMillis();
 	private TaskInjector taskInjector = TaskInjector.newInstance();
-	public Set<ArenaPlayer> playersVotingToStart = new HashSet<ArenaPlayer>();
-	public ArenaPortal portal = null;
-	public CuboidRegion region = null;
+	private Set<ArenaPlayer> playersVotingToStart = new HashSet<ArenaPlayer>();
+	private State state = State.WAITING_FOR_PLAYERS;
 
+	// Persistent
+	private String name;
+	private CuboidRegion region = null;
+
+	//
+	Location spawnPoint;
+	int maxNumPlayers;
+	int numPlayersRequiredToStart;
+	int numVotesRequiredToStart;
+	WorldVector portalKeyVector;
+	List<WorldVector> gameSpawnPointVectors;
+	long timeLimitInMinutes; //TODO
+
+
+	// Semi - Persistenet
+	private ArenaPortal portal = null;
+
+	// Contants
 	final int DEFAULT_MAX_PLAYERS = 15;
 	final int DEFAULT_PLAYERS_TO_START = 8;
 	final int DEFAULT_VOTES_TO_START = 2;
 
-	final String NODE_VOTES_REQUIRED = "votes to start";
+	final String NODE_REGION = "region";
+	final String NODE_MAX_PLAYERS = "max_players";
+	final String NODE_PLAYERS_REQUIRED = "playercount_to_start";
+	final String NODE_VOTES_REQUIRED = "votes_to_start";
+	final String NODE_SPAWNPOINT = "spawnpoint";
+	final String NODE_PORTAL_KEY = "portal.key";
+	final String NODE_GAME_SPAWNPOINTS = "game_spawnpoints";
 
 	public Arena(String name) {
 		this.name = name;
-
-		if(!Core.arenas.getKeys(false).contains(getName())){
-			Core.arenas.createSection(getName());
-		}
-		Core.arenas.set(getName() + ".max players", getMaxNumPlayers());
-		Core.arenas.set(getName() + ".playercount to start", getNumPlayersRequiredToStart());
-		Core.arenas.set(getName() + ".votes to start", getNumVotesRequiredToStart());
-
-		// Load region before spawnpoint.
-		loadRegionFromConfig();
-
-		if (!Core.arenas.isSet(getName() + ".spawnpoint"))
-			Core.arenas.createSection(getName() + ".spawnpoint");
-		if (!Core.arenas.isSet(getName() + ".world"))
-			Core.arenas.createSection(getName() + ".world");
-
-		try {
-			setPortalBlockLocation(getPortalBlockLocation());
-		} catch (IllegalArgumentException e) {
-			// Catch silently.
-		}
-		setState(State.WAITING_FOR_PLAYERS);
-		ArenaConfig.saveArenaConfig();
+		load();
 	}
+
+	public void setMaxNumPlayers(int maxNumPlayers) {
+		configSet(NODE_MAX_PLAYERS, maxNumPlayers);
+	}
+
+	public void setNumPlayersRequiredToStart(int numPlayersRequiredToStart) {
+		configSet(NODE_PLAYERS_REQUIRED, numPlayersRequiredToStart);
+	}
+
+	public void setNumVotesRequiredToStart(int numVotesRequiredToStart) {
+		configSet(NODE_VOTES_REQUIRED, numVotesRequiredToStart);
+	}
+
+	public void setPortalKeyVector(WorldVector portalKeyVector) {
+		configSet(NODE_PORTAL_KEY, portalKeyVector);
+	}
+
+	public void setGameSpawnPointVectors(List<WorldVector> gameSpawnPointVectors) {
+		configSet(NODE_GAME_SPAWNPOINTS, gameSpawnPointVectors);
+	}
+
+	public WorldVector getPortalKeyVector() {
+		return getArenaConfig().getWorldVector(getSubNodePath(NODE_PORTAL_KEY));
+	}
+
+	public void addGameSpawnPointVectors(WorldVector worldVector) {
+		List<WorldVector> gameSpawnPointVectors = getGameSpawnPointVectors();
+		gameSpawnPointVectors.add(worldVector);
+		setGameSpawnPointVectors(gameSpawnPointVectors);
+	}
+
+	public void load() {
+		// Root Node
+		Config arenaConfig = getArenaConfig();
+
+		if (!arenaConfig.getKeys(false).contains(getName())) {
+			arenaConfig.createSection(getName());
+		}
+
+		setSpawnPoint(getSpawnPoint());
+		setRegion(getRegionFromConfig());
+		setMaxNumPlayers(getMaxNumPlayers());
+		setNumPlayersRequiredToStart(getNumPlayersRequiredToStart());
+		setNumVotesRequiredToStart(getNumVotesRequiredToStart());
+		setPortalKeyVector(getPortalKeyVector());
+		setGameSpawnPointVectors(getGameSpawnPointVectors());
+
+		loadPortal(getPortalKeyVector());
+
+
+		setState(State.WAITING_FOR_PLAYERS);
+
+		ArenaCore.getInstance().save();
+	}
+
 
 	public String getName() {
 		return name;
@@ -153,10 +215,6 @@ public class Arena {
 		}
 
 		this.state = state;
-
-		//Persist it? all the other code looks at it. <- Bad reason.
-		//TODO Remove this retarded node
-		Core.arenas.set(getName() + ".status code", getState().ordinal());
 	}
 
 	protected void addPlayer(ArenaPlayer arenaPlayer) {
@@ -176,34 +234,20 @@ public class Arena {
 		}
 	}
 
-	@SuppressWarnings("unchecked")
-	public List<Vector> getGameSpawnVectors() {
-		List<Vector> vectors = new ArrayList<Vector>();
-		List configList = Core.arenas.getList(getName() + ".gamepoints");
-		if (configList != null) {
-			//TODO: Fuck this unsafe casting
-
-			vectors = (List<Vector>)configList;
-		}
-		return vectors;
+	public List<WorldVector> getGameSpawnPointVectors() {
+		return getArenaConfig().getWorldVectorList(getSubNodePath(NODE_GAME_SPAWNPOINTS));
 	}
 
-	public World getWorld() {
-		String worldName = Core.arenas.getString(getName() + ".world");
-		return Bukkit.getWorld(worldName);
-	}
-
-	public List<Location> getGameSpawnPoints() {
-		World world = getWorld();
+	public List<Location> getGameSpawnPointLocations() {
 		List<Location> gameSpawnPoints = new ArrayList<Location>();
-		for (Vector vector : getGameSpawnVectors()) {
-			gameSpawnPoints.add(vector.toLocation(world));
+		for (WorldVector worldVector : getGameSpawnPointVectors()) {
+			gameSpawnPoints.add(worldVector.toLocation());
 		}
 		return gameSpawnPoints;
 	}
 
 	public int getMaxNumPlayers() {
-		return Core.arenas.getInt(getName() + ".max players", DEFAULT_MAX_PLAYERS);
+		return getArenaConfig().getInt(getSubNodePath(NODE_MAX_PLAYERS), DEFAULT_MAX_PLAYERS);
 	}
 
 	public boolean isFull() {
@@ -216,11 +260,9 @@ public class Arena {
 
 
 	public void setPlayerSpawnPoints() {
-		List<Location> spawnPoints = getGameSpawnPoints();
+		List<Location> spawnPoints = getGameSpawnPointLocations();
 		List<ArenaPlayer> players = new ArrayList<ArenaPlayer>(getArenaPlayers());
 		Collections.shuffle(spawnPoints);
-
-		//TODO: Check that spawnPoints.size() > players.size();
 
 		for (int i = 0; i < players.size(); i++) {
 			playerSpawnPoints.put(players.get(i), spawnPoints.get(i % spawnPoints.size()));
@@ -238,9 +280,12 @@ public class Arena {
 	}
 
 	public Location getSpawnPoint() {
-		return ConfigUtil.getLocationFromVector(Core.arenas, getName() + ".spawnpoint", getName() + ".world");
+		return getArenaConfig().getLocation(getSubNodePath(NODE_SPAWNPOINT));
 	}
 
+	public void setSpawnPoint(Location spawnPoint) {
+		getArenaConfig().set(getSubNodePath(NODE_SPAWNPOINT), spawnPoint);
+	}
 
 	public void setPlayerAsDead(String playerName) {
 		ArenaPlayer arenaPlayer = getArenaPlayer(playerName);
@@ -258,19 +303,27 @@ public class Arena {
 	}
 
 	public int getNumVotesToStart() {
-		return playersVotingToStart.size();
+		return getPlayersVotingToStart().size();
 	}
 
 	public int getNumVotesRequiredToStart() {
-		return Core.arenas.getInt(getName() + ".votes to start", DEFAULT_VOTES_TO_START);
+		return getArenaConfig().getInt(getSubNodePath(NODE_VOTES_REQUIRED), DEFAULT_VOTES_TO_START);
 	}
 
 	public int getNumVotesNeededToStart() {
-		return Math.max(0, getNumVotesRequiredToStart() - getNumVotesToStart()); // limit lower bounds to 0.
+		// Scales down when less people are online.
+		// Allowing for configured requirements of only 1 vote. You could have 0 as well, but it wouldn't trigger by itself.
+		int required = getNumVotesRequiredToStart();
+		int online = Bukkit.getServer().getOnlinePlayers().length;
+		online = Math.max(2, online); // Limit lower bound to 2. As we want at least two players in an arena.
+		required = Math.min(required, online); // Choose whichever is less.
+		int needed = required - getNumVotesToStart();
+		needed = Math.max(0, needed); // Limit lower bound to zero.
+		return needed;
 	}
 
 	public int getNumPlayersRequiredToStart() {
-		return Core.arenas.getInt(getName() + ".playercount to start", DEFAULT_PLAYERS_TO_START);
+		return getArenaConfig().getInt(getSubNodePath(NODE_PLAYERS_REQUIRED), DEFAULT_PLAYERS_TO_START);
 	}
 
 	public int getNumPlayersNeededToStart() {
@@ -280,9 +333,6 @@ public class Arena {
 	public Set<ArenaPlayer> getPlayersVotingToStart() {
 		return playersVotingToStart;
 	}
-
-
-
 
 	public TaskInjector getTaskInjector() {
 		return taskInjector;
@@ -295,6 +345,14 @@ public class Arena {
 	public void scheduleTaskFor(State state, long delay) {
 		getTaskInjector().cancelAll();
 		switch (state) {
+			case CLOSED:
+				getTaskInjector().schedule(new ArenaClosedTask(this), delay);
+				break;
+
+			case WAITING_FOR_PLAYERS:
+				getTaskInjector().schedule(new ArenaWaitingForPlayersTask(this), delay);
+				break;
+
 			case COUNTING_DOWN:
 				getTaskInjector().schedule(new ArenaCountdownTask(this), delay);
 				break;
@@ -314,36 +372,20 @@ public class Arena {
 		}
 	}
 
-	public Location getPortalBlockLocation() {
-		return ConfigUtil.getLocationFromVector(Core.arenas, getName() + ".portal.vector", getName() + ".portal.world");
-	}
-
-	public void setPortalBlockLocation(Location location) {
-		if (location == null)
-			return;
-
-		Core.arenas.set(getName() + ".portal.world", location.getWorld().getName());
-		Core.arenas.set(getName() + ".portal.vector", location.toVector());
-
-		Location portalBlockLocation = getPortalBlockLocation();
-		loadPortal(portalBlockLocation);
-	}
-
-	public void loadPortal(Location location) {
-		if (location == null)
+	public void loadPortal(WorldVector worldVector) {
+		if (worldVector == null)
 			return;
 
 		if (hasPortal()) {
-			//TODO
+			//TODO Break down old portal.
 		}
 
-		this.portal = new ArenaPortal(location.getBlock());
+		this.portal = new ArenaPortal(worldVector.toLocation().getBlock());
 	}
 
 	public void update() {
 		updatePortal();
 	}
-
 
 	public void updatePortal() {
 		if (!hasPortal())
@@ -360,12 +402,16 @@ public class Arena {
 		return portal;
 	}
 
-	public void setNumVotesRequired(int numVotesRequired) {
-		configSet(NODE_VOTES_REQUIRED, numVotesRequired);
+	public String getSubNodePath(String subNode) {
+		return getName() + "." + subNode;
 	}
 
 	public void configSet(String subNode, Object obj) {
-		Core.arenas.set(getName() + "." + subNode, obj);
+		getArenaConfig().set(getSubNodePath(subNode), obj);
+	}
+
+	public Config getArenaConfig() {
+		return ArenaCore.getInstance().getArenaConfig();
 	}
 
 
@@ -377,39 +423,26 @@ public class Arena {
 		this.startTime = startTime;
 	}
 
-	public void loadRegionFromConfig() {
-		Vector min = Core.arenas.getVector(getName() + ".region.min", new Vector());
-		Vector max = Core.arenas.getVector(getName() + ".region.max", new Vector());
-		String worldName = Core.arenas.getString(getName() + ".region.world");
-		World world = null;
-		if (worldName != null) {
-			world = Bukkit.getServer().getWorld(worldName);
-		}
-		if (world == null) {
-			// Backwards compatibility. Fetch old world from spawnpoint.
-			world = getWorld();
-		}
-
-		try {
-			setRegion(world, min, max);
-		} catch (IllegalArgumentException e) {
-			// Don't do anything.
-		}
-	}
-
 	public void setRegion(World world, Vector min, Vector max) {
 		setRegion(new CuboidRegion(world, min, max));
 	}
 
 	public void setRegion(CuboidRegion region) {
 		this.region = region;
-		configSet("region.world", region.getWorld().getName());
-		configSet("region.min", region.getMin());
-		configSet("region.min", region.getMin());
+		configSet(NODE_REGION, region);
 	}
 
 	public CuboidRegion getRegion() {
 		return region;
+	}
+
+	public CuboidRegion getRegionFromConfig() {
+		Object val = getArenaConfig().get(getSubNodePath(NODE_REGION));
+		if (val instanceof CuboidRegion) {
+			return (CuboidRegion)val;
+		} else {
+			return null;
+		}
 	}
 
 	public boolean hasRegion() {
@@ -421,12 +454,13 @@ public class Arena {
 		return getSpawnPoint() != null;
 	}
 
-
 	public boolean isSetup() {
 		return hasRegion()
 			&& hasPortal()
-			&& getGameSpawnVectors().size() > 0
+			&& getGameSpawnPointVectors().size() > 0
 			&& hasSpawnPoint();
 	}
+
+
 
 }
